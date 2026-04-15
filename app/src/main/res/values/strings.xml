@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">FisioterapiaApp</string>
+    <string name="welcome_text">¡Bienvenido a Rehapp!</string>
+    <string name="role_question">¿Cómo deseas acceder?</string>
+    <string name="btn_physio">Soy Fisioterapeuta</string>
+    <string name="btn_patient">Soy Paciente</string>
+
+    // Registro Fisio
+    <string name="title_login">Inicio de sesión</string>
+    <string name="hint_dni">DNI/NIE</string>
+    <string name="hint_pass">Contraseña</string>
+    <string name="btn_entrar">Iniciar Sesión</string>
+    <string name="pregunta_cuenta">¿No tiene cuenta? </string>
+    <string name="link_registrarse">REGISTRARSE</string>
+
+    <string name="error_dni">El DNI es obligatorio</string>
+    <string name="error_pass_corta">La contraseña debe tener al menos 6 caracteres</string>
+
+    // Dashboard
+    <string name="title_mis_pacientes">Mis Pacientes</string>
+    <string name="perfil">Perfil</string>
+    <string name="añadir">Añadir</string>
+    <string name="config">Configuración</string>
+</resources>

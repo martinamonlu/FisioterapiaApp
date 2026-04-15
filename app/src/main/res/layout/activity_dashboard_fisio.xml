@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#c2d1ce"
+    tools:context=".DashboardFisioActivity">
+
+    <TextView
+        android:id="@+id/tvMisPacientes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="60dp"
+        android:text="@string/title_mis_pacientes"
+        android:textColor="#36769E"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/rvPacientes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPacientes"
+        android:layout_width="0dp"
+        android:layout_height="515dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvMisPacientes" />
+
+    <LinearLayout
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="#FFFFFF"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnPerfil"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_weight="1"
+            android:layout_marginTop="2.5dp"
+            android:padding="13.5dp"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/perfil"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/usericon"
+            app:tint="#547F9B" />
+
+        <ImageButton
+            android:id="@+id/btnAddPaciente"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_weight="1"
+            android:layout_marginTop="3dp"
+            android:padding="10dp"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/añadir"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/iconomas"
+            app:tint="#36769E" />
+
+        <ImageButton
+            android:id="@+id/btnConfig"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_weight="1"
+            android:layout_marginTop="3dp"
+            android:padding="2dp"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/config"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/settings"
+            app:tint="#547F9B" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
