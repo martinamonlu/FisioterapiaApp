@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FisioterapiaApp">
         <activity
+            android:name=".PerfilFisioActivity"
+            android:exported="false" />
+        <activity
             android:name=".AddPacienteActivity"
             android:exported="false" />
         <activity

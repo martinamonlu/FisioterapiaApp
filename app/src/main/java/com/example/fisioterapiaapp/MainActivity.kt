@@ -10,6 +10,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.snackbar.Snackbar
 
+// MAIN ACTIVITY (pantalla de bienvenida)
+// Permite elegir el tipo de usuario (Fisioterapeuta o Paciente)
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,28 +23,25 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // --- CÓDIGO PARA LOS BOTONES ---
+        // ENLACE CON ELEMENTOS DE LA INTERFAZ (XML → Kotlin)
+        val botonFisio = findViewById<Button>(R.id.btn_fisio) // Botón para acceso de fisioterapeuta
+        val botonPaciente = findViewById<Button>(R.id.btn_paciente) // Botón para acceso de paciente
 
-        // 1. Enlazamos los botones del diseño (XML) con el código (Kotlin)
-        val botonFisio = findViewById<Button>(R.id.btn_fisio)
-        val botonPaciente = findViewById<Button>(R.id.btn_paciente)
 
-        // 2. ¿Qué pasa al pulsar "Soy Fisioterapeuta"?
+        // LÓGICA DE INTERACCIÓN CON LOS BOTONES
+        // Acceso como fisioterapeuta:
         botonFisio.setOnClickListener {
             // Un aviso Toast para comprobar que el botón funciona
             Toast.makeText(this, "Yendo al registro de fisios...", Toast.LENGTH_SHORT).show()
+            // Cambio de pantalla hacia el login de fisioterapeuta
             val intent = Intent(this, SignInFisioActivity::class.java)
             startActivity(intent)
-
-            // Más adelante usaremos este hueco para hacer el salto de pantalla (Intent)
         }
 
-        // 3. ¿Qué pasa al pulsar "Soy Paciente"?
-
-        botonPaciente.setOnClickListener { view ->
+        // Acceso como paciente: funcionalidad todavía no implementada
+        botonPaciente.setOnClickListener {
             Toast.makeText(this, "Acceso de pacientes próximamente", Toast.LENGTH_SHORT).show()
         }
-
 
     }
 }
