@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- PANTALLA: PERFIL DEL FISIOTERAPEUTA -->
+<!-- Funcionalidad II: ver y editar datos personales del fisio -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,20 +12,6 @@
     android:background="#c2d1ce"
     tools:context=".PerfilFisioActivity">
 
-    <!-- TÍTULO -->
-    <TextView
-        android:id="@+id/tvTituloPerfil"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Mi Perfil"
-        android:textColor="#36769E"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:layout_marginTop="75dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <!-- BOTÓN ATRÁS -->
     <ImageButton
         android:id="@+id/btnBack"
@@ -32,12 +20,26 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Volver atrás"
+        android:contentDescription="@string/volver_atras"
         android:scaleType="fitCenter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/back__v1_removebg_preview"
         app:tint="#36769E" />
+
+    <!-- TÍTULO -->
+    <TextView
+        android:id="@+id/tvTituloPerfil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/title_mi_perfil"
+        android:textColor="#36769E"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- BOTÓN EDITAR -->
     <ImageButton
@@ -47,7 +49,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Editar perfil"
+        android:contentDescription="@string/editar_perfil"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_edit"
@@ -81,7 +83,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nombre: "
+                    android:text="@string/label_nombre_colon"
                     android:textSize="18sp"
                     android:textColor="#36769E"
                     android:textStyle="bold"/>
@@ -91,7 +93,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Juan"
+                    android:text="@string/placeholder_nombre_fisio"
                     android:textSize="18sp"
                     android:textColor="#36769E"
                     android:enabled="false"
@@ -108,7 +110,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Apellidos: "
+                    android:text="@string/label_apellidos_colon"
                     android:textSize="18sp"
                     android:textColor="#36769E"
                     android:textStyle="bold"/>
@@ -118,14 +120,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Pérez García"
+                    android:text="@string/placeholder_apellidos_fisio"
                     android:textSize="18sp"
                     android:textColor="#36769E"
                     android:enabled="false"
                     android:background="@android:color/transparent"/>
             </LinearLayout>
 
-            <!-- FECHA -->
+            <!-- FECHA NACIMIENTO -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -135,7 +137,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Fecha nacimiento: "
+                    android:text="@string/label_fecha_nac_colon"
                     android:textSize="18sp"
                     android:textColor="#36769E"
                     android:textStyle="bold"/>
@@ -145,14 +147,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="01/01/1990"
+                    android:text="@string/placeholder_fecha_fisio"
                     android:textSize="18sp"
                     android:textColor="#36769E"
                     android:enabled="false"
                     android:background="@android:color/transparent"/>
             </LinearLayout>
 
-            <!-- COLEGIADO -->
+            <!-- Nº COLEGIADO -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -162,7 +164,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nº colegiado: "
+                    android:text="@string/label_colegiado_colon"
                     android:textSize="18sp"
                     android:textColor="#36769E"
                     android:textStyle="bold"/>
@@ -172,7 +174,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="12345"
+                    android:text="@string/placeholder_colegiado_fisio"
                     android:textSize="18sp"
                     android:textColor="#36769E"
                     android:enabled="false"
@@ -189,7 +191,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Especialidad: "
+                    android:text="@string/label_especialidad_colon"
                     android:textSize="18sp"
                     android:textColor="#36769E"
                     android:textStyle="bold"/>
@@ -199,7 +201,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Fisioterapia deportiva"
+                    android:text="@string/placeholder_especialidad_fisio"
                     android:textSize="18sp"
                     android:textColor="#36769E"
                     android:enabled="false"
@@ -215,7 +217,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Email: "
+                    android:text="@string/label_email_colon"
                     android:textSize="18sp"
                     android:textColor="#36769E"
                     android:textStyle="bold"/>
@@ -225,15 +227,30 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="fisio@email.com"
+                    android:text="@string/placeholder_email_fisio"
                     android:textSize="18sp"
                     android:textColor="#36769E"
+                    android:inputType="textEmailAddress"
                     android:enabled="false"
                     android:background="@android:color/transparent"/>
             </LinearLayout>
 
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
+
+    <!-- BOTÓN GUARDAR (sólo visible en modo edición) -->
+    <Button
+        android:id="@+id/btnGuardarPerfil"
+        android:layout_width="280dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/btn_guardar_perfil"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:backgroundTint="#547F9B"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,54 +5,76 @@ import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 
 // DASHBOARD DEL FISIOTERAPEUTA
 // Pantalla principal tras iniciar sesión
-// Muestra una lista de pacientes y botones de acción en la parte inferior
+// Muestra la lista de pacientes y botones de acción en la parte inferior
 class DashboardFisioActivity : AppCompatActivity() {
+
+    // Lista mutable de pacientes (empieza con datos de ejemplo)
+    private val listaPacientes = mutableListOf(
+        Paciente("Juan Pérez García"),
+        Paciente("María Rodríguez López")
+    )
+
+    // Adaptador declarado aquí para poder actualizarlo desde el launcher
+    private lateinit var adaptador: PacienteAdapter
+
+    // LAUNCHER: espera el resultado de AddPacienteActivity
+    // Cuando el usuario registra un paciente, esta función recibe los datos
+    private val addPacienteLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val nombre    = result.data?.getStringExtra("nombre")    ?: ""
+            val apellidos = result.data?.getStringExtra("apellidos") ?: ""
+            val nombreCompleto = "$nombre $apellidos".trim()
+
+            if (nombreCompleto.isNotEmpty()) {
+                listaPacientes.add(Paciente(nombreCompleto))
+                // Notifica al adaptador que hay un elemento nuevo al final
+                adaptador.notifyItemInserted(listaPacientes.size - 1)
+                Toast.makeText(
+                    this,
+                    getString(R.string.msg_paciente_registrado, nombre, apellidos),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         enableEdgeToEdge()
         setContentView(R.layout.activity_dashboard_fisio)
 
-        // DATOS DE PRUEBA: lista de pacientes de ejemplo
-        val pacientesEjemplo = listOf(
-            Paciente("Juan Pérez García"),
-            Paciente("María Rodríguez López")
-        )
-
-        // CONFIGURACIÓN DEL RECYCLERVIEW (muestra la lista de pacientes en pantalla)
+        // CONFIGURACIÓN DEL RECYCLERVIEW
         val rvPacientes = findViewById<RecyclerView>(R.id.rvPacientes)
-        // Define cómo se organizan los elementos (lista vertical)
         rvPacientes.layoutManager = LinearLayoutManager(this)
-        // Asocia los datos con el adaptador para mostrarlos en pantalla
-        rvPacientes.adapter = PacienteAdapter(pacientesEjemplo)
+        adaptador = PacienteAdapter(listaPacientes)
+        rvPacientes.adapter = adaptador
 
         // BOTONES DE NAVEGACIÓN INFERIOR
-        val btnPerfil = findViewById<ImageButton>(R.id.btnPerfil)
-        val btnAdd = findViewById<ImageButton>(R.id.btnAddPaciente)
-        val btnConfig = findViewById<ImageButton>(R.id.btnConfig)
+        val btnPerfil  = findViewById<ImageButton>(R.id.btnPerfil)
+        val btnAdd     = findViewById<ImageButton>(R.id.btnAddPaciente)
+        val btnConfig  = findViewById<ImageButton>(R.id.btnConfig)
 
-        // LÓGICA DE INTERACCIÓN CON LOS BOTONES
         btnPerfil.setOnClickListener {
-            //Toast.makeText(this, "Perfil del Fisioterapeuta", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, PerfilFisioActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, PerfilFisioActivity::class.java))
         }
 
         btnConfig.setOnClickListener {
-            Toast.makeText(this, "Ajustes de la aplicación", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.msg_config), Toast.LENGTH_SHORT).show()
         }
 
+        // Abre AddPacienteActivity y espera resultado con el launcher
         btnAdd.setOnClickListener {
-            // Aquí luego abriremos la pantalla de añadir
             val intent = Intent(this, AddPacienteActivity::class.java)
-            startActivity(intent)
+            addPacienteLauncher.launch(intent)
         }
     }
 }

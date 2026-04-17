@@ -1,23 +1,96 @@
 <resources>
-    <string name="app_name">FisioterapiaApp</string>
-    <string name="welcome_text">¡Bienvenido a Rehapp!</string>
-    <string name="role_question">¿Cómo deseas acceder?</string>
-    <string name="btn_physio">Soy Fisioterapeuta</string>
-    <string name="btn_patient">Soy Paciente</string>
 
-    <!-- Registro Fisio  -->
-    <string name="title_login">Inicio de sesión</string>
-    <string name="hint_dni">DNI/NIE</string>
-    <string name="hint_pass">Contraseña</string>
-    <string name="btn_entrar">Iniciar Sesión</string>
-    <string name="pregunta_cuenta">¿No tiene cuenta? </string>
-    <string name="link_registrarse">REGISTRARSE</string>
-    <!-- <string name="error_dni">El DNI es obligatorio</string>  -->
-    <string name="error_pass_corta">La contraseña debe tener al menos 6 caracteres</string>
+<!-- NOMBRE DE LA APP -->
+<string name="app_name">Rehapp</string>
 
-    <!-- Dashboard  -->
-    <string name="title_mis_pacientes">Mis Pacientes</string>
-    <string name="perfil">Perfil</string>
-    <string name="añadir">Añadir</string>
-    <string name="config">Configuración</string>
+<!-- ===================== MAIN ACTIVITY ===================== -->
+<string name="welcome_text">¡Bienvenido a Rehapp!</string>
+<string name="role_question">¿Cómo deseas acceder?</string>
+<string name="btn_physio">Soy Fisioterapeuta</string>
+<string name="btn_patient">Soy Paciente</string>
+
+<!-- ===================== SIGN IN ===================== -->
+<string name="title_login">Iniciar sesión</string>
+<string name="hint_dni">DNI (ej: 12345678A)</string>
+<string name="hint_pass">Contraseña</string>
+<string name="btn_entrar">Iniciar Sesión</string>
+<string name="pregunta_cuenta">¿No tienes cuenta?</string>
+<string name="link_registrarse">Regístrate</string>
+
+<!-- Mensajes de error en login -->
+<string name="error_dni">El DNI es obligatorio</string>
+<string name="error_password">La contraseña es obligatoria</string>
+<string name="msg_bienvenida">Bienvenid@</string>
+<string name="msg_credenciales_incorrectas">DNI o contraseña incorrectos</string>
+<string name="msg_registro_proximamente">Registro de usuarios próximamente</string>
+<string name="msg_fisio_redirect">Yendo al registro de fisios…</string>
+<string name="msg_paciente_proximamente">Acceso de pacientes próximamente</string>
+
+<!-- ===================== DASHBOARD ===================== -->
+<string name="title_mis_pacientes">Mis pacientes</string>
+<string name="msg_config">Ajustes de la aplicación</string>
+
+<!-- Descripciones de botones (accesibilidad) -->
+<string name="perfil">Ver perfil</string>
+<string name="añadir">Añadir paciente</string>
+<string name="config">Configuración</string>
+
+<!-- ===================== PERFIL FISIO ===================== -->
+<string name="title_mi_perfil">Mi Perfil</string>
+<string name="editar_perfil">Editar perfil</string>
+<string name="volver_atras">Volver atrás</string>
+<string name="btn_guardar_perfil">Guardar cambios</string>
+<string name="msg_modo_edicion">Puedes editar tus datos</string>
+<string name="msg_perfil_guardado">Perfil actualizado correctamente</string>
+
+<!-- Etiquetas de campos del perfil -->
+<string name="label_nombre_colon">Nombre: </string>
+<string name="label_apellidos_colon">Apellidos: </string>
+<string name="label_fecha_nac_colon">Fecha nacimiento: </string>
+<string name="label_colegiado_colon">Nº colegiado: </string>
+<string name="label_especialidad_colon">Especialidad: </string>
+<string name="label_email_colon">Email: </string>
+
+<!-- Datos de ejemplo del fisio (placeholders) -->
+<string name="placeholder_nombre_fisio">Juan</string>
+<string name="placeholder_apellidos_fisio">Pérez García</string>
+<string name="placeholder_fecha_fisio">01/01/1990</string>
+<string name="placeholder_colegiado_fisio">12345</string>
+<string name="placeholder_especialidad_fisio">Fisioterapia deportiva</string>
+<string name="placeholder_email_fisio">fisio@email.com</string>
+
+<!-- ===================== ADD PACIENTE ===================== -->
+<string name="title_add_paciente">Nuevo paciente</string>
+<string name="btn_guardar_paciente">Registrar paciente</string>
+<string name="msg_paciente_registrado">%1$s %2$s registrado correctamente</string>
+
+<!-- Etiquetas del formulario -->
+<string name="label_nombre">Nombre *</string>
+<string name="label_apellidos">Apellidos *</string>
+<string name="label_fecha_nac">Fecha de nacimiento</string>
+<string name="label_dni">DNI *</string>
+<string name="label_telefono">Teléfono</string>
+<string name="label_diagnostico">Diagnóstico / Lesión</string>
+
+<!-- Hints del formulario -->
+<string name="hint_nombre">Ej: María</string>
+<string name="hint_apellidos">Ej: García López</string>
+<string name="hint_fecha_nac">DD/MM/AAAA</string>
+<string name="hint_dni_paciente">Ej: 87654321B</string>
+<string name="hint_telefono">Ej: 600 000 000</string>
+<string name="hint_diagnostico">Describe la lesión o motivo de consulta</string>
+
+<!-- ===================== ERRORES GENÉRICOS ===================== -->
+<string name="error_campo_obligatorio">Este campo es obligatorio</string>
+
+<!-- ===================== PATOLOGÍAS (Spinner) ===================== -->
+<!-- Opciones del desplegable de diagnóstico en el formulario de paciente -->
+<string-array name="patologias">
+    <item>Tendinitis rotuliana</item>
+    <item>Esguince de tobillo</item>
+    <item>Rotura de ligamento cruzado anterior</item>
+    <item>Fascitis plantar</item>
+    <item>Contractura muscular</item>
+</string-array>
+
 </resources>
