@@ -41,6 +41,15 @@ class PerfilFisioActivity : AppCompatActivity() {
         // Agrupamos los campos para activarlos/desactivarlos todos a la vez
         camposEditables = listOf(etNombre, etApellidos, etNacimiento, etColegiado, etEspecialidad, etEmail)
 
+        // CARGA DE DATOS: rellena los campos con los valores guardados en PerfilFisioData
+        // Así los cambios se mantienen aunque se destruya y recree la Activity
+        etNombre.setText(PerfilFisioData.nombre)
+        etApellidos.setText(PerfilFisioData.apellidos)
+        etNacimiento.setText(PerfilFisioData.nacimiento)
+        etColegiado.setText(PerfilFisioData.colegiado)
+        etEspecialidad.setText(PerfilFisioData.especialidad)
+        etEmail.setText(PerfilFisioData.email)
+
         // Estado inicial: campos en modo sólo lectura, botón guardar oculto
         setCamposHabilitados(false)
         btnGuardar.visibility = android.view.View.GONE
@@ -58,7 +67,7 @@ class PerfilFisioActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.msg_modo_edicion), Toast.LENGTH_SHORT).show()
         }
 
-        // BOTÓN GUARDAR: desactiva los campos y confirma que los datos se han guardado
+        // BOTÓN GUARDAR: persiste los datos en PerfilFisioData y vuelve a modo lectura
         btnGuardar.setOnClickListener {
             // Validación: el nombre no puede estar vacío
             if (etNombre.text.toString().trim().isEmpty()) {
@@ -66,7 +75,14 @@ class PerfilFisioActivity : AppCompatActivity() {
                 etNombre.requestFocus()
                 return@setOnClickListener
             }
-            // TODO: aquí se persistiría en base de datos cuando se implemente
+            // Guardamos los valores en el objeto compartido para que sobrevivan a la recreación
+            PerfilFisioData.nombre       = etNombre.text.toString().trim()
+            PerfilFisioData.apellidos    = etApellidos.text.toString().trim()
+            PerfilFisioData.nacimiento   = etNacimiento.text.toString().trim()
+            PerfilFisioData.colegiado    = etColegiado.text.toString().trim()
+            PerfilFisioData.especialidad = etEspecialidad.text.toString().trim()
+            PerfilFisioData.email        = etEmail.text.toString().trim()
+
             setCamposHabilitados(false)
             btnGuardar.visibility = android.view.View.GONE
             Toast.makeText(this, getString(R.string.msg_perfil_guardado), Toast.LENGTH_SHORT).show()
