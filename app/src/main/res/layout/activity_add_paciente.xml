@@ -147,6 +147,15 @@
                     android:textColor="#36769E"
                     android:textColorHint="#728E8D" />
 
+                <!-- EMAIL -->
+                <EditText
+                    android:id="@+id/etEmailPaciente"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Email del paciente *"
+                    android:inputType="textEmailAddress"
+                    android:layout_marginTop="16dp" />
+
                 <!-- TELÉFONO -->
                 <TextView
                     android:layout_width="wrap_content"

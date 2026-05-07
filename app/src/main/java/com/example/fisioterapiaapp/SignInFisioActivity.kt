@@ -12,66 +12,141 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
-// PANTALLA DE INICIO DE SESIÓN
-// Permite iniciar sesión o registrarse si el usuario es nuevo
 class SignInFisioActivity : AppCompatActivity() {
+
+    private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.sign_in_fisio)
-        // VALERIA: esto no lo entiendo y no se si sobra? ajusta el padding para evitar que la interfaz quede tapada por las barras del sistema?
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // ENLACE CON ELEMENTOS DE LA INTERFAZ (XML → Kotlin)
-        val etDni = findViewById<EditText>(R.id.etDni)
+        // ENLACE CON ELEMENTOS DE LA INTERFAZ
+        val etEmail = findViewById<EditText>(R.id.etDni) // Usamos el mismo ID pero ahora para email
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val btnEntrar = findViewById<Button>(R.id.btn_entrar)
         val tvRegistrarse = findViewById<TextView>(R.id.tvRegistrarse)
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
 
-        // LÓGICA DE VALIDACIÓN DEL INICIO DE SESIÓN
+        // LÓGICA DE INICIO DE SESIÓN CON FIREBASE
         btnEntrar.setOnClickListener {
-            val dniIngresado = etDni.text.toString()
-            val passwordIngresada = etPassword.text.toString()
+            val email = etEmail.text.toString().trim()
+            val password = etPassword.text.toString().trim()
 
-            // 1ª Validación: ¿Campos vacíos?
-            if (dniIngresado.isEmpty()) {
-                // etDni.error = getString(R.string.error_dni) --> lo quitaria para tenerlo igual que el error de contraseña
-                etDni.error = "El DNI es obligatorio"
-            }
-            else if (passwordIngresada.isEmpty()) {
-                etPassword.error = "La contraseña es obligatoria"
-            }
-            // 2ª Validación: ¿Son las credenciales correctas?
-            // Al no usar una base de datos con DNI y contraseña, lo simplificamos con unos predeterminados
-            else if (dniIngresado == "12345678A" && passwordIngresada == "admin123") {
-                Toast.makeText(this, "Bienvenid@", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, DashboardFisioActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-            // 3ª Validación: Credenciales incorrectas
-            else {
-                Snackbar.make(findViewById(android.R.id.content), "DNI o contraseña incorrectos", Snackbar.LENGTH_LONG).show()
+            // Validación de campos vacíos
+            when {
+                email.isEmpty() -> {
+                    etEmail.error = "El email es obligatorio"
+                    etEmail.requestFocus()
+                }
+                password.isEmpty() -> {
+                    etPassword.error = "La contraseña es obligatoria"
+                    etPassword.requestFocus()
+                }
+                else -> {
+                    iniciarSesionConFirebase(email, password)
+                }
             }
         }
 
-        // LÓGICA PARA IR A LA PANTALLA DE REGISTRO (Nueva cuenta): funcionalidad todavía no implementada
+        // IR A PANTALLA DE REGISTRO
         tvRegistrarse.setOnClickListener {
-            Toast.makeText(this, "Registro de usuarios próximamente", Toast.LENGTH_SHORT).show()
-            //val intent = Intent(this, SignUpFisioActivity::class.java)
-            //startActivity(intent)
+            val intent = Intent(this, SignUpFisioActivity::class.java)
+            startActivity(intent)
         }
 
-        // LÓGICA DEL BOTÓN ATRÁS
+        // BOTÓN ATRÁS
         btnBack.setOnClickListener {
-            // Cerramos esta actividad para volver a la principal
             finish()
         }
+    }
+
+    private fun iniciarSesionConFirebase(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener { authResult ->
+                val userId = authResult.user?.uid ?: return@addOnSuccessListener
+
+                // Verificar que el usuario es un fisioterapeuta Y está aprobado
+                db.collection("usuarios")
+                    .document(userId)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        if (document.exists()) {
+                            val tipo = document.getString("tipo")
+                            val aprobado = document.getBoolean("aprobado") ?: false
+
+                            when {
+                                tipo != "fisio" -> {
+                                    // No es fisioterapeuta
+                                    Toast.makeText(
+                                        this,
+                                        "Esta cuenta no es de fisioterapeuta",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    auth.signOut()
+                                }
+                                !aprobado -> {
+                                    // Es fisio pero NO está aprobado
+                                    Toast.makeText(
+                                        this,
+                                        "Tu cuenta está pendiente de aprobación por el administrador",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    auth.signOut()
+                                }
+                                else -> {
+                                    // Es fisio Y está aprobado - permitir acceso
+                                    Toast.makeText(this, "Bienvenid@", Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(this, DashboardFisioActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                }
+                            }
+                        } else {
+                            // El documento no existe en Firestore
+                            Toast.makeText(
+                                this,
+                                "Error: Usuario no encontrado en la base de datos",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            auth.signOut()
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(
+                            this,
+                            "Error al verificar usuario: ${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+            }
+            .addOnFailureListener { e ->
+                // Manejar errores de autenticación
+                val mensaje = when {
+                    e.message?.contains("no user record") == true ||
+                            e.message?.contains("password is invalid") == true ||
+                            e.message?.contains("INVALID_LOGIN_CREDENTIALS") == true ->
+                        "Email o contraseña incorrectos"
+                    e.message?.contains("network error") == true ->
+                        "Error de conexión. Verifica tu internet"
+                    else -> "Error de autenticación: ${e.message}"
+                }
+
+                Snackbar.make(
+                    findViewById(android.R.id.content),
+                    mensaje,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
     }
 }

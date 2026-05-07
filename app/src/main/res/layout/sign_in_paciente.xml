@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -24,11 +23,12 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <EditText
-        android:id="@+id/etDniPaciente"
+        android:id="@+id/etEmailPaciente"
         android:layout_width="280dp"
         android:layout_height="60dp"
         android:layout_marginTop="50dp"
-        android:hint="@string/hint_dni_paciente"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
         android:backgroundTint="#547F9B"
         android:textColor="#36769E"
         android:textColorHint="#728E8D"
@@ -46,7 +46,7 @@
         android:backgroundTint="#547F9B"
         android:textColor="#36769E"
         android:textColorHint="#728E8D"
-        app:layout_constraintTop_toBottomOf="@id/etDniPaciente"
+        app:layout_constraintTop_toBottomOf="@id/etEmailPaciente"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 

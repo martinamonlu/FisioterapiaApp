@@ -1,78 +1,130 @@
 package com.example.fisioterapiaapp
 
-import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import android.content.Intent
+import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignInPacienteActivity : AppCompatActivity() {
 
+    private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.sign_in_paciente)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        // ELEMENTOS INTERFAZ
-        val etDni = findViewById<EditText>(R.id.etDniPaciente)
+        val etEmail = findViewById<EditText>(R.id.etEmailPaciente)
         val etPassword = findViewById<EditText>(R.id.etPasswordPaciente)
         val btnEntrar = findViewById<Button>(R.id.btnEntrarPaciente)
         val btnBack = findViewById<ImageButton>(R.id.btnBackPaciente)
 
-        // LOGIN
         btnEntrar.setOnClickListener {
-
-            val dni = etDni.text.toString().trim()
+            val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
 
             when {
-                dni.isEmpty() -> {
-                    etDni.error = getString(R.string.error_dni)
-                }
-
-                password.isEmpty() -> {
-                    etPassword.error = getString(R.string.error_password)
-                }
-
-                // CREDENCIALES DE PRUEBA
-                dni == "87654321B" && password == "paciente123" -> {
-
-                    Toast.makeText(
-                        this,
-                        getString(R.string.msg_bienvenida),
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    // FUTURA PANTALLA DEL PACIENTE
-                    // startActivity(Intent(this, DashboardPacienteActivity::class.java))
-
-                }
-
-                else -> {
-                    Snackbar.make(
-                        findViewById(android.R.id.content),
-                        getString(R.string.msg_credenciales_incorrectas),
-                        Snackbar.LENGTH_LONG
-                    ).show()
-                }
+                email.isEmpty() -> etEmail.error = "Email obligatorio"
+                password.isEmpty() -> etPassword.error = "Contraseña obligatoria"
+                else -> iniciarSesion(email, password)
             }
         }
 
-        // BOTÓN ATRÁS
         btnBack.setOnClickListener {
             finish()
         }
+    }
+
+    private fun iniciarSesion(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener { authResult ->
+                val userId = authResult.user?.uid ?: return@addOnSuccessListener
+
+                // Verificar si es primer login
+                db.collection("pacientes")
+                    .document(userId)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        val primerLogin = document.getBoolean("primerLogin") ?: false
+
+                        if (primerLogin) {
+                            // Obligar a cambiar contraseña
+                            mostrarDialogoCambioContraseña()
+                        } else {
+                            // Ir al dashboard del paciente
+                            Toast.makeText(this, "Bienvenid@", Toast.LENGTH_SHORT).show()
+                            // TODO: Cuando crees DashboardPacienteActivity, descomenta estas líneas:
+                            // val intent = Intent(this, DashboardPacienteActivity::class.java)
+                            // startActivity(intent)
+                            // finish()
+                        }
+                    }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(
+                    this,
+                    "Email o contraseña incorrectos",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+    }
+
+    private fun mostrarDialogoCambioContraseña() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_cambio_password, null)
+        val etNuevaPassword = dialogView.findViewById<EditText>(R.id.etNuevaPassword)
+        val etConfirmarPassword = dialogView.findViewById<EditText>(R.id.etConfirmarPassword)
+
+        AlertDialog.Builder(this)
+            .setTitle("Cambio de contraseña obligatorio")
+            .setMessage("Por seguridad, debes cambiar tu contraseña temporal")
+            .setView(dialogView)
+            .setCancelable(false)
+            .setPositiveButton("Cambiar") { _, _ ->
+                val nueva = etNuevaPassword.text.toString()
+                val confirmar = etConfirmarPassword.text.toString()
+
+                when {
+                    nueva.length < 6 -> {
+                        Toast.makeText(this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show()
+                        mostrarDialogoCambioContraseña()
+                    }
+                    nueva != confirmar -> {
+                        Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
+                        mostrarDialogoCambioContraseña()
+                    }
+                    else -> cambiarContraseña(nueva)
+                }
+            }
+            .show()
+    }
+
+    private fun cambiarContraseña(nuevaPassword: String) {
+        val user = auth.currentUser ?: return
+
+        user.updatePassword(nuevaPassword)
+            .addOnSuccessListener {
+                // Actualizar en Firestore que ya no es primer login
+                db.collection("pacientes")
+                    .document(user.uid)
+                    .update("primerLogin", false)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Contraseña actualizada correctamente", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "¡Bienvenid@ a Rehapp!", Toast.LENGTH_SHORT).show()
+
+                        // TODO: Cuando crees DashboardPacienteActivity, descomenta:
+                        // val intent = Intent(this, DashboardPacienteActivity::class.java)
+                        // startActivity(intent)
+                        // finish()
+                    }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error al cambiar contraseña: ${e.message}", Toast.LENGTH_LONG).show()
+            }
     }
 }
