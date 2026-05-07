@@ -29,7 +29,7 @@
         android:layout_marginTop="50dp"
         android:backgroundTint="#547F9B"
         android:ems="10"
-        android:hint="Email"
+        android:hint="@string/hint_email"
         android:inputType="textEmailAddress"
         android:textColor="#36769E"
         android:textColorHint="#728E8D"

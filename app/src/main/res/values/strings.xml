@@ -11,7 +11,7 @@
 
     <!-- ===================== SIGN IN ===================== -->
     <string name="title_login">Iniciar sesión</string>
-    <string name="hint_dni">DNI (ej: 12345678A)</string>
+    <string name="hint_email">Email</string>
     <string name="hint_pass">Contraseña</string>
     <string name="btn_entrar">Iniciar Sesión</string>
     <string name="pregunta_cuenta">¿No tienes cuenta?</string>
@@ -71,12 +71,14 @@
     <string name="label_dni">DNI *</string>
     <string name="label_telefono">Teléfono</string>
     <string name="label_diagnostico">Diagnóstico / Lesión</string>
+    <string name="label_email_paciente">Email del paciente *</string>
 
     <!-- Hints del formulario -->
     <string name="hint_nombre">Ej: María</string>
     <string name="hint_apellidos">Ej: García López</string>
     <string name="hint_fecha_nac">DD/MM/AAAA</string>
-    <string name="hint_dni_paciente">Ej: 87654321B</string>
+    <string name="hint_dni">Ej: 12345678A</string>
+    <string name="hint_mail_paciente">Ej: paciente@email.com</string>
     <string name="hint_telefono">Ej: 600 000 000</string>
     <string name="hint_diagnostico">Describe la lesión o motivo de consulta</string>
 

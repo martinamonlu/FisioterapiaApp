@@ -142,19 +142,30 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:backgroundTint="#547F9B"
-                    android:hint="@string/hint_dni_paciente"
+                    android:hint="@string/hint_dni"
                     android:inputType="text"
                     android:textColor="#36769E"
                     android:textColorHint="#728E8D" />
 
                 <!-- EMAIL -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_email_paciente"
+                    android:textColor="#36769E"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
                 <EditText
                     android:id="@+id/etEmailPaciente"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Email del paciente *"
+                    android:layout_marginBottom="12dp"
+                    android:backgroundTint="#547F9B"
+                    android:hint="@string/hint_mail_paciente"
                     android:inputType="textEmailAddress"
-                    android:layout_marginTop="16dp" />
+                    android:textColor="#36769E"
+                    android:textColorHint="#728E8D" />
 
                 <!-- TELÉFONO -->
                 <TextView
