@@ -9,17 +9,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FirebaseFirestore
 
 // DASHBOARD DEL FISIOTERAPEUTA
 // Pantalla principal tras iniciar sesión
 // Muestra la lista de pacientes y botones de acción en la parte inferior
 class DashboardFisioActivity : AppCompatActivity() {
 
-    // Lista mutable de pacientes (empieza con datos de ejemplo)
-    private val listaPacientes = mutableListOf(
-        Paciente("Juan Pérez García"),
-        Paciente("María Rodríguez López")
-    )
+    private val db = FirebaseFirestore.getInstance()
+
+    // Lista mutable de pacientes (datos de la base de datos Firebase)
+    private val listaPacientes = mutableListOf<Paciente>()
 
     // Adaptador declarado aquí para poder actualizarlo desde el launcher
     private lateinit var adaptador: PacienteAdapter
@@ -35,9 +35,6 @@ class DashboardFisioActivity : AppCompatActivity() {
             val nombreCompleto = "$nombre $apellidos".trim()
 
             if (nombreCompleto.isNotEmpty()) {
-                listaPacientes.add(Paciente(nombreCompleto))
-                // Notifica al adaptador que hay un elemento nuevo al final
-                adaptador.notifyItemInserted(listaPacientes.size - 1)
                 Toast.makeText(
                     this,
                     getString(R.string.msg_paciente_registrado, nombre, apellidos),
@@ -58,6 +55,8 @@ class DashboardFisioActivity : AppCompatActivity() {
         adaptador = PacienteAdapter(listaPacientes)
         rvPacientes.adapter = adaptador
 
+        cargarPacientes()
+
         // BOTONES DE NAVEGACIÓN INFERIOR
         val btnPerfil  = findViewById<ImageButton>(R.id.btnPerfil)
         val btnAdd     = findViewById<ImageButton>(R.id.btnAddPaciente)
@@ -77,4 +76,25 @@ class DashboardFisioActivity : AppCompatActivity() {
             addPacienteLauncher.launch(intent)
         }
     }
+
+    private fun cargarPacientes() {
+
+        db.collection("pacientes")
+            .addSnapshotListener { snapshots, error ->
+
+                if (error != null) return@addSnapshotListener
+
+                listaPacientes.clear()
+
+                for (doc in snapshots!!) {
+                    val nombre = doc.getString("nombre") ?: ""
+                    val apellidos = doc.getString("apellidos") ?: ""
+
+                    listaPacientes.add(Paciente("$nombre $apellidos"))
+                }
+
+                adaptador.notifyDataSetChanged()
+            }
+    }
+
 }

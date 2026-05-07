@@ -7,15 +7,20 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.firestore.FirebaseFirestore
 
 // PANTALLA DE REGISTRO DE NUEVO PACIENTE
 // Funcionalidad I: el fisioterapeuta añade los datos de un nuevo paciente
 // El diagnóstico se selecciona de un desplegable (Spinner) con patologías predefinidas
 class AddPacienteActivity : AppCompatActivity() {
+
+    private val db = FirebaseFirestore.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -77,14 +82,34 @@ class AddPacienteActivity : AppCompatActivity() {
                     etDni.requestFocus()
                 }
                 else -> {
-                    // Empaquetamos los datos en un Intent de retorno
-                    val resultIntent = Intent().apply {
-                        putExtra("nombre",      nombre)
-                        putExtra("apellidos",   apellidos)
-                        putExtra("diagnostico", diagnostico)
-                    }
-                    setResult(RESULT_OK, resultIntent)
-                    finish()
+                    val paciente = hashMapOf(
+                        "nombre" to nombre,
+                        "apellidos" to apellidos,
+                        "dni" to dni,
+                        "diagnostico" to diagnostico,
+                        "telefono" to etTelefono.text.toString().trim()
+                    )
+
+                    db.collection("pacientes")
+                        .add(paciente)
+                        .addOnSuccessListener {
+
+                            val resultIntent = Intent().apply {
+                                putExtra("nombre", nombre)
+                                putExtra("apellidos", apellidos)
+                                putExtra("diagnostico", diagnostico)
+                            }
+
+                            setResult(RESULT_OK, resultIntent)
+                            finish()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(
+                                this,
+                                "Error al guardar paciente",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                 }
             }
         }

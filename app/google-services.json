@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "738421844797",
+    "project_id": "rehapp-f5543",
+    "storage_bucket": "rehapp-f5543.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:738421844797:android:5f4f1761fda332b6cdb354",
+        "android_client_info": {
+          "package_name": "com.example.fisioterapiaapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOznkuP6dyb3tKoSNchubEJLe7Ar_KIeM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
