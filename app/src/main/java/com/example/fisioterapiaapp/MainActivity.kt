@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 
 // MAIN ACTIVITY (pantalla de bienvenida)
 // Permite elegir el tipo de usuario (Fisioterapeuta o Paciente)
