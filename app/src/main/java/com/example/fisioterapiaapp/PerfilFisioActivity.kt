@@ -9,12 +9,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
-// PANTALLA DE PERFIL DEL FISIOTERAPEUTA
-// Funcionalidad II: ver y modificar los datos personales del fisio
 class PerfilFisioActivity : AppCompatActivity() {
 
-    // Lista de todos los campos editables del perfil
+    private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
     private lateinit var camposEditables: List<EditText>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,28 +39,22 @@ class PerfilFisioActivity : AppCompatActivity() {
         val etEspecialidad = findViewById<EditText>(R.id.etEspecialidad)
         val etEmail        = findViewById<EditText>(R.id.etEmail)
 
-        // Agrupamos los campos para activarlos/desactivarlos todos a la vez
+        // Agrupamos los campos
         camposEditables = listOf(etNombre, etApellidos, etNacimiento, etColegiado, etEspecialidad, etEmail)
-
-        // CARGA DE DATOS: rellena los campos con los valores guardados en PerfilFisioData
-        // Así los cambios se mantienen aunque se destruya y recree la Activity
-        etNombre.setText(PerfilFisioData.nombre)
-        etApellidos.setText(PerfilFisioData.apellidos)
-        etNacimiento.setText(PerfilFisioData.nacimiento)
-        etColegiado.setText(PerfilFisioData.colegiado)
-        etEspecialidad.setText(PerfilFisioData.especialidad)
-        etEmail.setText(PerfilFisioData.email)
 
         // Estado inicial: campos en modo sólo lectura, botón guardar oculto
         setCamposHabilitados(false)
         btnGuardar.visibility = android.view.View.GONE
 
-        // BOTÓN ATRÁS: cierra esta pantalla y vuelve al dashboard
+        // CARGAR DATOS REALES DE FIREBASE
+        cargarDatosUsuario(etNombre, etApellidos, etNacimiento, etColegiado, etEspecialidad, etEmail)
+
+        // BOTÓN ATRÁS
         btnBack.setOnClickListener {
             finish()
         }
 
-        // BOTÓN EDITAR: activa todos los campos para que el fisio pueda modificarlos
+        // BOTÓN EDITAR
         btnEdit.setOnClickListener {
             setCamposHabilitados(true)
             etNombre.requestFocus()
@@ -67,29 +62,87 @@ class PerfilFisioActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.msg_modo_edicion), Toast.LENGTH_SHORT).show()
         }
 
-        // BOTÓN GUARDAR: persiste los datos en PerfilFisioData y vuelve a modo lectura
+        // BOTÓN GUARDAR
         btnGuardar.setOnClickListener {
-            // Validación: el nombre no puede estar vacío
             if (etNombre.text.toString().trim().isEmpty()) {
                 etNombre.error = getString(R.string.error_campo_obligatorio)
                 etNombre.requestFocus()
                 return@setOnClickListener
             }
-            // Guardamos los valores en el objeto compartido para que sobrevivan a la recreación
-            PerfilFisioData.nombre       = etNombre.text.toString().trim()
-            PerfilFisioData.apellidos    = etApellidos.text.toString().trim()
-            PerfilFisioData.nacimiento   = etNacimiento.text.toString().trim()
-            PerfilFisioData.colegiado    = etColegiado.text.toString().trim()
-            PerfilFisioData.especialidad = etEspecialidad.text.toString().trim()
-            PerfilFisioData.email        = etEmail.text.toString().trim()
+
+            // Guardar en Firebase
+            guardarDatosUsuario(
+                etNombre.text.toString().trim(),
+                etApellidos.text.toString().trim(),
+                etNacimiento.text.toString().trim(),
+                etColegiado.text.toString().trim(),
+                etEspecialidad.text.toString().trim(),
+                etEmail.text.toString().trim()
+            )
 
             setCamposHabilitados(false)
             btnGuardar.visibility = android.view.View.GONE
-            Toast.makeText(this, getString(R.string.msg_perfil_guardado), Toast.LENGTH_SHORT).show()
         }
     }
 
-    // Habilita o deshabilita todos los campos editables del perfil
+    private fun cargarDatosUsuario(
+        etNombre: EditText,
+        etApellidos: EditText,
+        etNacimiento: EditText,
+        etColegiado: EditText,
+        etEspecialidad: EditText,
+        etEmail: EditText
+    ) {
+        val userId = auth.currentUser?.uid ?: return
+
+        db.collection("usuarios")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    etNombre.setText(document.getString("nombre") ?: "")
+                    etApellidos.setText(document.getString("apellidos") ?: "")
+                    etNacimiento.setText(document.getString("fechaNacimiento") ?: "")
+                    etColegiado.setText(document.getString("numeroColegiado") ?: "")
+                    etEspecialidad.setText(document.getString("especialidad") ?: "")
+                    etEmail.setText(document.getString("email") ?: "")
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error al cargar datos: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun guardarDatosUsuario(
+        nombre: String,
+        apellidos: String,
+        fechaNacimiento: String,
+        numeroColegiado: String,
+        especialidad: String,
+        email: String
+    ) {
+        val userId = auth.currentUser?.uid ?: return
+
+        val datosActualizados = hashMapOf(
+            "nombre" to nombre,
+            "apellidos" to apellidos,
+            "fechaNacimiento" to fechaNacimiento,
+            "numeroColegiado" to numeroColegiado,
+            "especialidad" to especialidad,
+            "email" to email
+        )
+
+        db.collection("usuarios")
+            .document(userId)
+            .update(datosActualizados as Map<String, Any>)
+            .addOnSuccessListener {
+                Toast.makeText(this, getString(R.string.msg_perfil_guardado), Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error al guardar: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+    }
+
     private fun setCamposHabilitados(habilitado: Boolean) {
         camposEditables.forEach { campo ->
             campo.isEnabled = habilitado

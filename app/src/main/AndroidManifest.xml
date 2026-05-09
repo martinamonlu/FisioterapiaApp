@@ -11,6 +11,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FisioterapiaApp">
+
+        <activity
+            android:name=".CrearPlanActivity"
+            android:exported="false" />
+
+        <!-- Permisos para vídeos: -->
+        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+        <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
         <activity
             android:name=".SignInPacienteActivity"
             android:exported="false" />
@@ -25,6 +34,9 @@
             android:exported="false" />
         <activity
             android:name=".SignInFisioActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SignUpFisioActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

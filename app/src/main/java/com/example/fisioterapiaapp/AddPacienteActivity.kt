@@ -6,7 +6,6 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import java.util.*
 
 class AddPacienteActivity : AppCompatActivity() {
 
@@ -20,9 +19,15 @@ class AddPacienteActivity : AppCompatActivity() {
         val etNombre = findViewById<EditText>(R.id.etNombrePaciente)
         val etApellidos = findViewById<EditText>(R.id.etApellidosPaciente)
         val etDni = findViewById<EditText>(R.id.etDniPaciente)
-        val etEmail = findViewById<EditText>(R.id.etEmailPaciente) // NUEVO CAMPO
+        val etEmail = findViewById<EditText>(R.id.etEmailPaciente)
         val spinnerDiagnostico = findViewById<Spinner>(R.id.spinnerDiagnostico)
         val btnGuardar = findViewById<Button>(R.id.btnGuardarPaciente)
+
+        // CONFIGURAR EL SPINNER CON LAS OPCIONES DE DIAGNÓSTICO
+        val patologias = resources.getStringArray(R.array.patologias)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, patologias)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerDiagnostico.adapter = adapter
 
         btnGuardar.setOnClickListener {
             val nombre = etNombre.text.toString().trim()
@@ -79,9 +84,9 @@ class AddPacienteActivity : AppCompatActivity() {
                     "dni" to dni,
                     "email" to email,
                     "diagnostico" to diagnostico,
-                    "fisioterapeutaId" to auth.currentUser?.uid, // ID del fisio que lo registra
+                    "fisioterapeutaId" to auth.currentUser?.uid,
                     "userId" to userId,
-                    "primerLogin" to true, // Para obligar cambio de contraseña
+                    "primerLogin" to true,
                     "fechaRegistro" to com.google.firebase.Timestamp.now()
                 )
 
@@ -95,12 +100,12 @@ class AddPacienteActivity : AppCompatActivity() {
                             Toast.LENGTH_LONG
                         ).show()
 
-                        // Volver al dashboard
-                        val resultIntent = Intent().apply {
-                            putExtra("nombre", nombre)
-                            putExtra("apellidos", apellidos)
+                        // IR DIRECTO A CREAR PLAN
+                        val intent = Intent(this, CrearPlanActivity::class.java).apply {
+                            putExtra("pacienteId", userId)
+                            putExtra("nombrePaciente", "$nombre $apellidos")
                         }
-                        setResult(RESULT_OK, resultIntent)
+                        startActivity(intent)
                         finish()
                     }
                     .addOnFailureListener { e ->

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="40dp"
+        tools:context=".CrearPlanActivity">
+
+        <!-- BOTÓN ATRÁS -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/volver_atras"
+            android:scaleType="fitCenter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/back__v1_removebg_preview"
+            app:tint="@color/primary_blue_dark" />
+
+        <!-- TÍTULO -->
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="75dp"
+            android:layout_marginStart="16dp"
+            android:text="Crear Plan de Ejercicios"
+            android:textColor="@color/title_text"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- NOMBRE DEL PACIENTE -->
+        <TextView
+            android:id="@+id/tvNombrePaciente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="Para: Nombre del Paciente"
+            android:textColor="@color/text_secondary"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitulo" />
+
+        <!-- CARD CON EL FORMULARIO DEL PLAN -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardFormulario"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvNombrePaciente">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- FASE DE RECUPERACIÓN -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fase de recuperación *"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <Spinner
+                    android:id="@+id/spinnerFase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:backgroundTint="@color/input_border"
+                    android:minHeight="48dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp" />
+
+                <!-- DURACIÓN -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Duración (semanas) *"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etDuracion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:backgroundTint="@color/input_border"
+                    android:hint="Ej: 4"
+                    android:inputType="number"
+                    android:textColor="@color/input_text"
+                    android:textColorHint="@color/input_hint" />
+
+                <!-- OBJETIVOS TERAPÉUTICOS -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Objetivos terapéuticos *"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etObjetivos"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginBottom="16dp"
+                    android:backgroundTint="@color/input_border"
+                    android:gravity="top|start"
+                    android:hint="Describe los objetivos del plan..."
+                    android:inputType="textMultiLine"
+                    android:textColor="@color/input_text"
+                    android:textColorHint="@color/input_hint" />
+
+                <!-- SEPARADOR -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/input_border"
+                    android:alpha="0.3" />
+
+                <!-- TÍTULO EJERCICIOS -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ejercicios"
+                    android:textColor="@color/text_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- CONTENEDOR DINÁMICO DE EJERCICIOS -->
+                <LinearLayout
+                    android:id="@+id/containerEjercicios"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <!-- BOTÓN AÑADIR EJERCICIO -->
+                <Button
+                    android:id="@+id/btnAnadirEjercicio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="+ Añadir Ejercicio"
+                    android:textColor="@color/button_text"
+                    app:backgroundTint="@color/primary_teal_light" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- BOTÓN CREAR PLAN (PRINCIPAL) -->
+        <Button
+            android:id="@+id/btnCrearPlan"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_margin="16dp"
+            android:text="Crear Plan"
+            android:textColor="@color/button_text"
+            android:textSize="18sp"
+            app:backgroundTint="@color/button_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardFormulario" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

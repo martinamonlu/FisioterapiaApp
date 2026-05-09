@@ -97,5 +97,6 @@
 
     <string name="title_login_paciente">Inicio sesión paciente</string>
     <string name="msg_paciente_redirect">Yendo al acceso de pacientes...</string>
+    <string name="title_activity_crear_plan">CrearPlanActivity</string>
 
 </resources>
