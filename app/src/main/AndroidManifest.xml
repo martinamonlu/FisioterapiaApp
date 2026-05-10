@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permisos para vídeos: -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -15,10 +19,6 @@
         <activity
             android:name=".CrearPlanActivity"
             android:exported="false" />
-
-        <!-- Permisos para vídeos: -->
-        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-        <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
         <activity
             android:name=".SignInPacienteActivity"

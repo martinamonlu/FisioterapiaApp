@@ -73,6 +73,9 @@ class AddPacienteActivity : AppCompatActivity() {
         dni: String,
         diagnostico: String
     ) {
+
+        val fisioUid = auth.currentUser?.uid
+
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { authResult ->
                 val userId = authResult.user?.uid ?: return@addOnSuccessListener
@@ -84,7 +87,7 @@ class AddPacienteActivity : AppCompatActivity() {
                     "dni" to dni,
                     "email" to email,
                     "diagnostico" to diagnostico,
-                    "fisioterapeutaId" to auth.currentUser?.uid,
+                    "fisioterapeutaId" to fisioUid,
                     "userId" to userId,
                     "primerLogin" to true,
                     "fechaRegistro" to com.google.firebase.Timestamp.now()

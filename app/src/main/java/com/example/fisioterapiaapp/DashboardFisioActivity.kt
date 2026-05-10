@@ -79,14 +79,26 @@ class DashboardFisioActivity : AppCompatActivity() {
 
     private fun cargarPacientes() {
 
+        val uid = com.google.firebase.auth.FirebaseAuth
+            .getInstance()
+            .currentUser
+            ?.uid ?: return
+
         db.collection("pacientes")
+            .whereEqualTo("fisioterapeutaId", uid)
             .addSnapshotListener { snapshots, error ->
 
-                if (error != null) return@addSnapshotListener
+                if (error != null) {
+                    Toast.makeText(this, error.message, Toast.LENGTH_LONG).show()
+                    return@addSnapshotListener
+                }
 
                 listaPacientes.clear()
 
                 for (doc in snapshots!!) {
+
+                    Toast.makeText(this, doc.getString("nombre"), Toast.LENGTH_SHORT).show()
+
                     val nombre = doc.getString("nombre") ?: ""
                     val apellidos = doc.getString("apellidos") ?: ""
 
