@@ -1,42 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- ===================== COLORES PRINCIPALES ===================== -->
-    <!-- Paleta de color principal de Rehapp: tonos azul-verde agua -->
+    <color name="primary_blue_dark">#36769E</color>
+    <color name="primary_blue_medium">#547F9B</color>
+    <color name="primary_teal">#5FA19D</color>
+    <color name="primary_teal_light">#7AB5B2</color>
 
-    <color name="primary_blue_dark">#36769E</color>      <!-- Azul oscuro - títulos, textos importantes -->
-    <color name="primary_blue_medium">#547F9B</color>    <!-- Azul medio - botones principales, bordes -->
-    <color name="primary_teal">#5FA19D</color>           <!-- Verde agua - títulos alternativos -->
-    <color name="primary_teal_light">#7AB5B2</color>     <!-- Verde agua claro - botones secundarios -->
+    <!-- Aliases del módulo paciente -->
+    <color name="rehapp_primary">#2C7873</color>
+    <color name="rehapp_primary_dark">#1E5551</color>
+    <color name="rehapp_primary_light">#52AB98</color>
+    <color name="rehapp_accent">#6FB98F</color>
+    <color name="rehapp_background">#F5FAF9</color>
+    <color name="rehapp_surface">#FFFFFF</color>
 
     <!-- ===================== COLORES DE FONDO ===================== -->
-
-    <color name="background_light">#c2d1ce</color>       <!-- Fondo principal verde agua muy claro -->
-    <color name="white">#FFFFFF</color>                  <!-- Blanco - fondos de tarjetas, texto en botones -->
+    <color name="background_light">#c2d1ce</color>
+    <color name="white">#FFFFFFFF</color>
 
     <!-- ===================== COLORES DE TEXTO ===================== -->
-
-    <color name="text_primary">#36769E</color>           <!-- Texto principal (mismo que primary_blue_dark) -->
-    <color name="text_secondary">#547F9B</color>         <!-- Texto secundario (mismo que primary_blue_medium) -->
-    <color name="text_hint">#728E8D</color>              <!-- Hints en campos de texto -->
-    <color name="text_on_primary">#FFFFFF</color>        <!-- Texto sobre botones/fondos oscuros -->
+    <color name="text_primary">#36769E</color>
+    <color name="text_secondary">#547F9B</color>
+    <color name="text_hint">#728E8D</color>
+    <color name="text_on_primary">#FFFFFF</color>
 
     <!-- ===================== COLORES DE ESTADO ===================== -->
-
-    <color name="error">#FF0000</color>                  <!-- Rojo - errores, validaciones -->
-    <color name="black">#000000</color>                  <!-- Negro - uso general si necesario -->
+    <color name="error">#FF0000</color>
+    <color name="black">#FF000000</color>
 
     <!-- ===================== COLORES SEMÁNTICOS ===================== -->
-    <!-- Alias para facilitar cambios futuros sin tocar todos los XMLs -->
+    <color name="button_background">#547F9B</color>
+    <color name="button_background_alt">#7AB5B2</color>
+    <color name="button_text">#FFFFFF</color>
+    <color name="input_border">#547F9B</color>
+    <color name="input_text">#36769E</color>
+    <color name="input_hint">#728E8D</color>
+    <color name="title_text">#36769E</color>
+    <color name="title_text_alt">#5FA19D</color>
 
-    <color name="button_background">#547F9B</color>      <!-- Color de fondo de botones principales -->
-    <color name="button_background_alt">#7AB5B2</color>  <!-- Color de fondo de botones alternativos -->
-    <color name="button_text">#FFFFFF</color>            <!-- Color de texto en botones -->
+    <!-- ===================== ESTADOS DE EJERCICIO ===================== -->
+    <color name="color_completada">#43A047</color>
+    <color name="color_pendiente">#FB8C00</color>
+    <color name="color_no_completada">#E53935</color>
+    <color name="color_descanso">#90A4AE</color>
 
-    <color name="input_border">#547F9B</color>           <!-- Color de bordes de campos de entrada -->
-    <color name="input_text">#36769E</color>             <!-- Color de texto en campos de entrada -->
-    <color name="input_hint">#728E8D</color>             <!-- Color de hints en campos de entrada -->
+    <!-- ===================== ESCALA EVA (DOLOR) ===================== -->
+    <color name="eva_none">#43A047</color>
+    <color name="eva_mild">#8BC34A</color>
+    <color name="eva_moderate">#FFC107</color>
+    <color name="eva_severe">#FF5722</color>
+    <color name="eva_max">#E53935</color>
 
-    <color name="title_text">#36769E</color>             <!-- Color de títulos principales -->
-    <color name="title_text_alt">#5FA19D</color>         <!-- Color de títulos alternativos -->
+    <!-- ===================== GRÁFICAS ===================== -->
+    <color name="chart_eva">#E53935</color>
+    <color name="chart_carga">#1E88E5</color>
+    <color name="chart_rpe">#FB8C00</color>
+    <color name="chart_adherencia_high">#43A047</color>
+    <color name="chart_adherencia_mid">#FFC107</color>
+    <color name="chart_adherencia_low">#E53935</color>
 
+    <!-- ===================== ALERTAS ===================== -->
+    <color name="alerta_urgente">#E53935</color>
+    <color name="alerta_aviso">#FB8C00</color>
+    <color name="alerta_info">#1E88E5</color>
+
+    <!-- ===================== CHAT BURBUJAS ===================== -->
+    <color name="bubble_paciente">#2C7873</color>
+    <color name="bubble_fisio">#EEEEEE</color>
 </resources>

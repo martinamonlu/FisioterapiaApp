@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Acceso como paciente: funcionalidad todavía no implementada
+        // Acceso como paciente: SignIn del módulo MVVM
         botonPaciente.setOnClickListener {
 
             Toast.makeText(
@@ -48,7 +48,10 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             ).show()
 
-            val intent = Intent(this, SignInPacienteActivity::class.java)
+            val intent = Intent(
+                this,
+                com.example.fisioterapiaapp.paciente.ui.auth.SignInPacienteActivity::class.java
+            )
             startActivity(intent)
         }
 

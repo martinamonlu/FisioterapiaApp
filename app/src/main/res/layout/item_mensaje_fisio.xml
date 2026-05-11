@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="start"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="4dp">
+
+    <!-- Avatar del fisio -->
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_person"
+        android:background="#2C7873"
+        android:padding="4dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginTop="4dp"
+        android:contentDescription="Fisioterapeuta" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="260dp"
+        android:orientation="vertical"
+        android:background="@drawable/bg_bubble_fisio"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tvTextoFisio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mensaje"
+            android:textSize="15sp"
+            android:textColor="#212121" />
+
+        <TextView
+            android:id="@+id/tvHoraFisio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10:30"
+            android:textSize="10sp"
+            android:textColor="#9E9E9E"
+            android:layout_gravity="end"
+            android:layout_marginTop="2dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

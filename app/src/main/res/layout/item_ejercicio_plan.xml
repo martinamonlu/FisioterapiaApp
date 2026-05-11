@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="10dp"
+    android:background="?attr/selectableItemBackground">
+
+    <!-- Punto indicador de tipo -->
+    <View
+        android:id="@+id/viewIndicadorTipo"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@drawable/shape_circle_indicator"
+        android:layout_marginEnd="10dp" />
+
+    <!-- Nombre e info del ejercicio -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvNombreEjercicioPlan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre del ejercicio"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp">
+
+            <TextView
+                android:id="@+id/tvDetalleEjercicioPlan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3 series × 10 reps · 5 kg"
+                android:textSize="12sp"
+                android:textColor="#757575" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Botón ver vídeo (si tiene URL) -->
+    <ImageButton
+        android:id="@+id/btnVideoEjercicioPlan"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/ic_play"
+        android:background="@drawable/shape_circle_green"
+        android:contentDescription="Ver vídeo"
+        android:padding="6dp"
+        android:visibility="gone" />
+
+</LinearLayout>

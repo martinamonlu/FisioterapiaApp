@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="end"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="4dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="260dp"
+        android:orientation="vertical"
+        android:background="@drawable/bg_bubble_paciente"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tvTextoPaciente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mensaje"
+            android:textSize="15sp"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/tvHoraPaciente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10:30"
+            android:textSize="10sp"
+            android:textColor="#CCFFFFFF"
+            android:layout_gravity="end"
+            android:layout_marginTop="2dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
