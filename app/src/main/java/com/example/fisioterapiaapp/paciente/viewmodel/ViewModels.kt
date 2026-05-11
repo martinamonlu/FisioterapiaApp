@@ -76,14 +76,22 @@ class RegistroSesionViewModel(application: Application) : AndroidViewModel(appli
     val fatiga = MutableLiveData(5)       // 0-10
     val notas = MutableLiveData("")
 
-    fun guardarRegistro(planId: String, ejercicioIndex: Int, dia: String) {
+    fun guardarRegistro(
+        planId: String,
+        dia: String,
+        ejerciciosCompletados: List<Int>,
+        ejerciciosCompletadosNombres: List<String>
+    ) {
         _guardarState.value = UiState.Loading
+
         viewModelScope.launch {
             val registro = RegistroSesion(
                 planId = planId,
-                ejercicioIndex = ejercicioIndex,
+                ejercicioIndex = ejerciciosCompletados.firstOrNull() ?: -1,
                 dia = dia,
                 sesionCompletada = sesionCompletada.value ?: false,
+                ejerciciosCompletados = ejerciciosCompletados,
+                ejerciciosCompletadosNombres = ejerciciosCompletadosNombres,
                 seriesCompletadas = seriesCompletadas.value ?: 0,
                 repsCompletadas = repeticionesCompletadas.value ?: 0,
                 pesoUsado = pesoUsado.value ?: "",
@@ -92,6 +100,7 @@ class RegistroSesionViewModel(application: Application) : AndroidViewModel(appli
                 fatiga = fatiga.value ?: 5,
                 notas = notas.value ?: ""
             )
+
             repo.guardarRegistro(registro)
                 .onSuccess { _guardarState.value = UiState.Success(Unit) }
                 .onFailure {
@@ -100,6 +109,7 @@ class RegistroSesionViewModel(application: Application) : AndroidViewModel(appli
                 }
         }
     }
+
 }
 
 // ════════════════════════════════════════════════════════════

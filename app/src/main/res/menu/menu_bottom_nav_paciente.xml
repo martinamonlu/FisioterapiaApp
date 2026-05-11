@@ -12,11 +12,6 @@
         android:title="Plan" />
 
     <item
-        android:id="@+id/progresoFragment"
-        android:icon="@drawable/ic_chart"
-        android:title="Progreso" />
-
-    <item
         android:id="@+id/chatFragment"
         android:icon="@drawable/ic_chat"
         android:title="Chat" />

@@ -76,18 +76,29 @@ data class RegistroSesion(
     @DocumentId val id: String = "",
     val pacienteId: String = "",
     val planId: String = "",
-    val ejercicioIndex: Int = 0,
+    val ejercicioIndex: Int = -1,
     val dia: String = "",
     val fecha: Timestamp = Timestamp.now(),
     val sesionCompletada: Boolean = true,
+
+    // Ejercicios marcados en el dashboard antes de registrar la sesión
+    val ejerciciosCompletados: List<Int> = emptyList(),
+    val ejerciciosCompletadosNombres: List<String> = emptyList(),
+
+    // Carga externa
     val seriesCompletadas: Int = 0,
     val repsCompletadas: Int = 0,
     val pesoUsado: String = "",
+
+    // Carga interna
     val eva: Int = 0,
     val rpe: Int = 6,
     val fatiga: Int = 5,
+
+    // Molestias, incidencias y observaciones
     val notas: String = ""
 )
+
 
 /**
  * Alerta generada para el paciente.

@@ -18,12 +18,6 @@
         tools:layout="@layout/fragment_plan" />
 
     <fragment
-        android:id="@+id/progresoFragment"
-        android:name="com.example.fisioterapiaapp.paciente.ui.progreso.ProgresoFragment"
-        android:label="Progreso"
-        tools:layout="@layout/fragment_progreso" />
-
-    <fragment
         android:id="@+id/chatFragment"
         android:name="com.example.fisioterapiaapp.paciente.ui.chat.ChatFragment"
         android:label="Chat"

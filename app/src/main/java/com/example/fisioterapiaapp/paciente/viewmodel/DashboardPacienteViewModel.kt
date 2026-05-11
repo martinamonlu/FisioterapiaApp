@@ -52,22 +52,29 @@ class DashboardPacienteViewModel(application: Application) : AndroidViewModel(ap
         viewModelScope.launch {
             try {
                 val p = repo.getPaciente()
-                _paciente.value = p
+                android.util.Log.d("DASH_DEBUG", "Paciente: ${p?.nombre}, id: ${p?.id}")
+                _paciente.postValue(p)
 
                 val plan = repo.getPlanActivo()
-                _plan.value = plan
+                android.util.Log.d("DASH_DEBUG", "Plan cargado: ${plan?.id}")
+                android.util.Log.d("DASH_DEBUG", "Ejercicios en plan: ${plan?.ejercicios?.size}")
+                plan?.ejercicios?.forEachIndexed { i, ej ->
+                    android.util.Log.d("DASH_DEBUG", "  [$i] '${ej.nombreEjercicio}' dias=${ej.diasSemana}")
+                }
+                android.util.Log.d("DASH_DEBUG", "Día de hoy: '${diaDeHoy()}'")
+                _plan.postValue(plan)
 
                 if (plan != null) {
-                    _registroHoy.value = repo.getRegistroDia(plan.id, diaDeHoy())
+                    _registroHoy.postValue(repo.getRegistroDia(plan.id, diaDeHoy()))
                     val registros = repo.getRegistrosDePlan(plan.id)
                     val sesionesEsperadas = plan.ejercicios.sumOf { it.diasSemana.size } * plan.duracionSemanas
                     if (sesionesEsperadas > 0) {
                         val completadas = registros.count { it.sesionCompletada }
-                        _adherencia.value = (completadas.toFloat() / sesionesEsperadas * 100f).coerceIn(0f, 100f)
+                        _adherencia.postValue((completadas.toFloat() / sesionesEsperadas * 100f).coerceIn(0f, 100f))
                     }
                 }
             } catch (e: Exception) {
-                android.util.Log.e("DASHBOARD_VM", "Error cargando dashboard: ${e.message}")
+                android.util.Log.e("DASH_DEBUG", "Error: ${e.message}", e)
             }
         }
     }
