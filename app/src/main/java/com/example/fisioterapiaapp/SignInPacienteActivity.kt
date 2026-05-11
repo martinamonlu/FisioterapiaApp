@@ -32,7 +32,7 @@ class SignInPacienteActivity : AppCompatActivity() {
             when {
                 email.isEmpty() -> etEmail.error = "Email obligatorio"
                 password.isEmpty() -> etPassword.error = "Contraseña obligatoria"
-                else -> iniciarSesion(email, password)
+                else -> verificarPaciente(email, password)
             }
         }
 
@@ -41,6 +41,47 @@ class SignInPacienteActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun verificarPaciente(email: String, password: String) {
+
+        db.collection("pacientes")
+            .whereEqualTo("email", email)
+            .get()
+            .addOnSuccessListener { documents ->
+
+                if (documents.isEmpty) {
+
+                    Toast.makeText(
+                        this,
+                        "No existe ningún paciente con ese email",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    return@addOnSuccessListener
+                }
+
+                val pacienteDoc = documents.documents[0]
+
+                val estadoCuenta =
+                    pacienteDoc.getString("estadoCuenta") ?: "pendiente"
+
+                if (estadoCuenta == "pendiente") {
+
+                    activarCuentaPaciente(
+                        pacienteDoc.id,
+                        email,
+                        password
+                    )
+
+                } else {
+
+                    iniciarSesion(email, password)
+                }
+            }
+    }
+
+
+
     private fun iniciarSesion(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener { authResult ->
@@ -48,10 +89,15 @@ class SignInPacienteActivity : AppCompatActivity() {
 
                 // Verificar si es primer login
                 db.collection("pacientes")
-                    .document(userId)
+                    .whereEqualTo("userId", userId)
                     .get()
-                    .addOnSuccessListener { document ->
-                        val primerLogin = document.getBoolean("primerLogin") ?: false
+                    .addOnSuccessListener { documents ->
+
+                        val document = documents.documents.firstOrNull()
+                        if (document == null) return@addOnSuccessListener
+
+                        val primerLogin =
+                            document.getBoolean("primerLogin") ?: false
 
                         if (primerLogin) {
                             // Obligar a cambiar contraseña
@@ -74,6 +120,49 @@ class SignInPacienteActivity : AppCompatActivity() {
                 ).show()
             }
     }
+
+
+    private fun activarCuentaPaciente(
+        pacienteId: String,
+        email: String,
+        password: String
+    ) {
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener { authResult ->
+
+                val authUid = authResult.user?.uid ?: return@addOnSuccessListener
+
+                db.collection("pacientes")
+                    .document(pacienteId)
+                    .update(
+                        mapOf(
+                            "userId" to authUid,
+                            "estadoCuenta" to "activa"
+                        )
+                    )
+                    .addOnSuccessListener {
+
+                        Toast.makeText(
+                            this,
+                            "Cuenta activada correctamente",
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        iniciarSesion(email, password)
+                    }
+            }
+            .addOnFailureListener { e ->
+
+                Toast.makeText(
+                    this,
+                    "Error al activar cuenta: ${e.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+    }
+
+
 
     private fun mostrarDialogoCambioContraseña() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_cambio_password, null)
@@ -111,16 +200,38 @@ class SignInPacienteActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 // Actualizar en Firestore que ya no es primer login
                 db.collection("pacientes")
-                    .document(user.uid)
-                    .update("primerLogin", false)
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Contraseña actualizada correctamente", Toast.LENGTH_SHORT).show()
-                        Toast.makeText(this, "¡Bienvenid@ a Rehapp!", Toast.LENGTH_SHORT).show()
+                    .whereEqualTo("userId", user.uid)
+                    .get()
+                    .addOnSuccessListener { documents ->
 
-                        // TODO: Cuando crees DashboardPacienteActivity, descomenta:
-                        // val intent = Intent(this, DashboardPacienteActivity::class.java)
-                        // startActivity(intent)
-                        // finish()
+                        val pacienteDoc = documents.documents.firstOrNull()
+                        if (pacienteDoc == null) return@addOnSuccessListener
+
+                        db.collection("pacientes")
+                            .document(pacienteDoc.id)
+                            .update("primerLogin", false)
+
+                            .addOnSuccessListener {
+                                Toast.makeText(
+                                    this,
+                                    "Contraseña actualizada correctamente",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                Toast.makeText(this, "¡Bienvenid@ a Rehapp!", Toast.LENGTH_SHORT)
+                                    .show()
+
+                                auth.signOut()
+
+                                Toast.makeText(this, "Contraseña actualizada. Vuelve a iniciar sesión", Toast.LENGTH_LONG).show()
+
+                                startActivity(Intent(this, SignInPacienteActivity::class.java))
+                                finish()
+
+                                // TODO: Cuando crees DashboardPacienteActivity, descomenta:
+                                // val intent = Intent(this, DashboardPacienteActivity::class.java)
+                                // startActivity(intent)
+                                // finish()
+                            }
                     }
             }
             .addOnFailureListener { e ->

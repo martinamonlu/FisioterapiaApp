@@ -55,11 +55,9 @@ class AddPacienteActivity : AppCompatActivity() {
                     etEmail.requestFocus()
                 }
                 else -> {
-                    // Generar contraseña temporal (DNI del paciente)
-                    val contraseñaTemporal = dni
 
                     // Crear usuario en Firebase Authentication
-                    crearCuentaPaciente(email, contraseñaTemporal, nombre, apellidos, dni, diagnostico)
+                    crearCuentaPaciente(email, nombre, apellidos, dni, diagnostico)
                 }
             }
         }
@@ -67,64 +65,60 @@ class AddPacienteActivity : AppCompatActivity() {
 
     private fun crearCuentaPaciente(
         email: String,
-        password: String,
         nombre: String,
         apellidos: String,
         dni: String,
         diagnostico: String
     ) {
 
-        val fisioUid = auth.currentUser?.uid
+        val fisioUid = auth.currentUser?.uid ?: return
 
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener { authResult ->
-                val userId = authResult.user?.uid ?: return@addOnSuccessListener
+        // Generar ID único del paciente
+        val pacienteId = db.collection("pacientes").document().id
 
-                // Guardar datos del paciente en Firestore
-                val paciente = hashMapOf(
-                    "nombre" to nombre,
-                    "apellidos" to apellidos,
-                    "dni" to dni,
-                    "email" to email,
-                    "diagnostico" to diagnostico,
-                    "fisioterapeutaId" to fisioUid,
-                    "userId" to userId,
-                    "primerLogin" to true,
-                    "fechaRegistro" to com.google.firebase.Timestamp.now()
-                )
+        // Crear documento del paciente
+        val paciente = hashMapOf(
+            "nombre" to nombre,
+            "apellidos" to apellidos,
+            "dni" to dni,
+            "email" to email,
+            "diagnostico" to diagnostico,
+            "fisioterapeutaId" to fisioUid,
+            "userId" to null,
+            "primerLogin" to true,
+            "estadoCuenta" to "pendiente",
+            "fechaRegistro" to com.google.firebase.Timestamp.now()
+        )
 
-                db.collection("pacientes")
-                    .document(userId)
-                    .set(paciente)
-                    .addOnSuccessListener {
-                        Toast.makeText(
-                            this,
-                            "Paciente registrado. Usuario: $email | Contraseña temporal: $dni",
-                            Toast.LENGTH_LONG
-                        ).show()
+        db.collection("pacientes")
+            .document(pacienteId)
+            .set(paciente)
+            .addOnSuccessListener {
 
-                        // IR DIRECTO A CREAR PLAN
-                        val intent = Intent(this, CrearPlanActivity::class.java).apply {
-                            putExtra("pacienteId", userId)
-                            putExtra("nombrePaciente", "$nombre $apellidos")
-                        }
-                        startActivity(intent)
-                        finish()
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(
-                            this,
-                            "Error al guardar paciente: ${e.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-            }
-            .addOnFailureListener { e ->
                 Toast.makeText(
                     this,
-                    "Error al crear cuenta: ${e.message}",
+                    "Paciente registrado correctamente",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                // Ir a crear plan
+                val intent = Intent(this, CrearPlanActivity::class.java).apply {
+                    putExtra("pacienteId", pacienteId)
+                    putExtra("nombrePaciente", "$nombre $apellidos")
+                }
+
+                startActivity(intent)
+                finish()
+            }
+            .addOnFailureListener { e ->
+
+                Toast.makeText(
+                    this,
+                    "Error al guardar paciente: ${e.message}",
                     Toast.LENGTH_LONG
                 ).show()
             }
+
+
     }
 }
