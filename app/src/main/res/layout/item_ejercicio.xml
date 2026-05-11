@@ -122,24 +122,109 @@
             android:textColorHint="@color/input_hint" />
 
         <!-- FRECUENCIA -->
+        <!-- DÍAS DE LA SEMANA -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Frecuencia (veces/semana) *"
+            android:text="Días de la semana *"
             android:textColor="@color/text_primary"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"/>
 
-        <EditText
-            android:id="@+id/etFrecuencia"
+        <LinearLayout
+            android:id="@+id/layoutDiasSemana"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginBottom="12dp"
-            android:backgroundTint="@color/input_border"
-            android:hint="Ej: 3"
-            android:inputType="number"
-            android:textColor="@color/input_text"
-            android:textColorHint="@color/input_hint" />
+            android:weightSum="7">
+
+            <CheckBox
+                android:id="@+id/cbLunes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="L"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary"
+                android:buttonTint="@color/primary_teal"
+                android:gravity="center"
+                android:layoutDirection="rtl"/>
+
+            <CheckBox
+                android:id="@+id/cbMartes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="M"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary"
+                android:buttonTint="@color/primary_teal"
+                android:gravity="center"
+                android:layoutDirection="rtl"/>
+
+            <CheckBox
+                android:id="@+id/cbMiercoles"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="X"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary"
+                android:buttonTint="@color/primary_teal"
+                android:gravity="center"
+                android:layoutDirection="rtl"/>
+
+            <CheckBox
+                android:id="@+id/cbJueves"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="J"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary"
+                android:buttonTint="@color/primary_teal"
+                android:gravity="center"
+                android:layoutDirection="rtl"/>
+
+            <CheckBox
+                android:id="@+id/cbViernes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="V"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary"
+                android:buttonTint="@color/primary_teal"
+                android:gravity="center"
+                android:layoutDirection="rtl"/>
+
+            <CheckBox
+                android:id="@+id/cbSabado"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="S"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary"
+                android:buttonTint="@color/primary_teal"
+                android:gravity="center"
+                android:layoutDirection="rtl"/>
+
+            <CheckBox
+                android:id="@+id/cbDomingo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="D"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary"
+                android:buttonTint="@color/primary_teal"
+                android:gravity="center"
+                android:layoutDirection="rtl"/>
+
+        </LinearLayout>
 
         <!-- VÍDEO -->
         <TextView

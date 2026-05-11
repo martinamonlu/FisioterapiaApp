@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import android.widget.CheckBox
 
 class CrearPlanActivity : AppCompatActivity() {
 
@@ -100,7 +101,13 @@ class CrearPlanActivity : AppCompatActivity() {
         val etRepeticiones = ejercicioView.findViewById<EditText>(R.id.etRepeticiones)
         val etSeries = ejercicioView.findViewById<EditText>(R.id.etSeries)
         val etPeso = ejercicioView.findViewById<EditText>(R.id.etPeso)
-        val etFrecuencia = ejercicioView.findViewById<EditText>(R.id.etFrecuencia)
+        val cbLunes = ejercicioView.findViewById<CheckBox>(R.id.cbLunes)
+        val cbMartes = ejercicioView.findViewById<CheckBox>(R.id.cbMartes)
+        val cbMiercoles = ejercicioView.findViewById<CheckBox>(R.id.cbMiercoles)
+        val cbJueves = ejercicioView.findViewById<CheckBox>(R.id.cbJueves)
+        val cbViernes = ejercicioView.findViewById<CheckBox>(R.id.cbViernes)
+        val cbSabado = ejercicioView.findViewById<CheckBox>(R.id.cbSabado)
+        val cbDomingo = ejercicioView.findViewById<CheckBox>(R.id.cbDomingo)
         val btnSeleccionarVideo = ejercicioView.findViewById<Button>(R.id.btnSeleccionarVideo)
         val tvNombreVideo = ejercicioView.findViewById<TextView>(R.id.tvNombreVideo)
 
@@ -127,7 +134,13 @@ class CrearPlanActivity : AppCompatActivity() {
             etRepeticiones = etRepeticiones,
             etSeries = etSeries,
             etPeso = etPeso,
-            etFrecuencia = etFrecuencia,
+            cbLunes = cbLunes,
+            cbMartes = cbMartes,
+            cbMiercoles = cbMiercoles,
+            cbJueves = cbJueves,
+            cbViernes = cbViernes,
+            cbSabado = cbSabado,
+            cbDomingo = cbDomingo,
             tvNombreVideo = tvNombreVideo,
             videoUri = null
         )
@@ -226,7 +239,16 @@ class CrearPlanActivity : AppCompatActivity() {
             val repeticiones = ejercicioView.etRepeticiones.text.toString().trim()
             val series = ejercicioView.etSeries.text.toString().trim()
             val peso = ejercicioView.etPeso.text.toString().trim()
-            val frecuencia = ejercicioView.etFrecuencia.text.toString().trim()
+            val diasSeleccionados = mutableListOf<String>().apply {
+                if (ejercicioView.cbLunes.isChecked)    add("Lunes")
+                if (ejercicioView.cbMartes.isChecked)   add("Martes")
+                if (ejercicioView.cbMiercoles.isChecked) add("Miércoles")
+                if (ejercicioView.cbJueves.isChecked)   add("Jueves")
+                if (ejercicioView.cbViernes.isChecked)  add("Viernes")
+                if (ejercicioView.cbSabado.isChecked)   add("Sábado")
+                if (ejercicioView.cbDomingo.isChecked)  add("Domingo")
+            }
+
 
             when {
                 repeticiones.isEmpty() -> {
@@ -241,12 +263,12 @@ class CrearPlanActivity : AppCompatActivity() {
                     Toast.makeText(this, "Completa todos los campos del ejercicio ${index + 1}", Toast.LENGTH_SHORT).show()
                     return
                 }
-                frecuencia.isEmpty() -> {
-                    ejercicioView.etFrecuencia.error = "Obligatorio"
-                    ejercicioView.etFrecuencia.requestFocus()
-                    Toast.makeText(this, "Completa todos los campos del ejercicio ${index + 1}", Toast.LENGTH_SHORT).show()
+
+                diasSeleccionados.isEmpty() -> {
+                    Toast.makeText(this, "Selecciona al menos un día en el ejercicio ${index + 1}", Toast.LENGTH_SHORT).show()
                     return
                 }
+
             }
 
             // Crear objeto ejercicio (sin URL de vídeo por ahora, se subirá después)
@@ -255,7 +277,7 @@ class CrearPlanActivity : AppCompatActivity() {
                 "repeticiones" to repeticiones.toInt(),
                 "series" to series.toInt(),
                 "peso" to peso,
-                "frecuencia" to frecuencia.toInt(),
+                "diasSemana" to diasSeleccionados,
                 "videoUrl" to null // Se actualizará después de subir
             )
 
@@ -359,7 +381,13 @@ class CrearPlanActivity : AppCompatActivity() {
         val etRepeticiones: EditText,
         val etSeries: EditText,
         val etPeso: EditText,
-        val etFrecuencia: EditText,
+        val cbLunes: CheckBox,
+        val cbMartes: CheckBox,
+        val cbMiercoles: CheckBox,
+        val cbJueves: CheckBox,
+        val cbViernes: CheckBox,
+        val cbSabado: CheckBox,
+        val cbDomingo: CheckBox,
         val tvNombreVideo: TextView,
         var videoUri: Uri?
     )
