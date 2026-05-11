@@ -52,7 +52,16 @@ class DashboardFisioActivity : AppCompatActivity() {
         // CONFIGURACIÓN DEL RECYCLERVIEW
         val rvPacientes = findViewById<RecyclerView>(R.id.rvPacientes)
         rvPacientes.layoutManager = LinearLayoutManager(this)
-        adaptador = PacienteAdapter(listaPacientes)
+        adaptador = PacienteAdapter(listaPacientes) { paciente ->
+            val intent = Intent(this, DetallePacienteActivity::class.java).apply {
+                putExtra("pacienteId", paciente.id)
+                putExtra("nombre", paciente.nombre)
+                putExtra("apellidos", paciente.apellidos)
+                putExtra("email", paciente.email)
+                putExtra("diagnostico", paciente.diagnostico)
+            }
+            startActivity(intent)
+        }
         rvPacientes.adapter = adaptador
 
         cargarPacientes()
@@ -78,30 +87,27 @@ class DashboardFisioActivity : AppCompatActivity() {
     }
 
     private fun cargarPacientes() {
-
         val uid = com.google.firebase.auth.FirebaseAuth
-            .getInstance()
-            .currentUser
-            ?.uid ?: return
+            .getInstance().currentUser?.uid ?: return
 
         db.collection("pacientes")
             .whereEqualTo("fisioterapeutaId", uid)
             .addSnapshotListener { snapshots, error ->
-
-                if (error != null) {
-                    return@addSnapshotListener
-                }
+                if (error != null) return@addSnapshotListener
 
                 listaPacientes.clear()
 
                 for (doc in snapshots!!) {
-
-                    val nombre = doc.getString("nombre") ?: ""
-                    val apellidos = doc.getString("apellidos") ?: ""
-
-                    listaPacientes.add(Paciente("$nombre $apellidos"))
+                    listaPacientes.add(
+                        Paciente(
+                            id = doc.id,
+                            nombre = doc.getString("nombre") ?: "",
+                            apellidos = doc.getString("apellidos") ?: "",
+                            email = doc.getString("email") ?: "",
+                            diagnostico = doc.getString("diagnostico") ?: ""
+                        )
+                    )
                 }
-
                 adaptador.notifyDataSetChanged()
             }
     }
