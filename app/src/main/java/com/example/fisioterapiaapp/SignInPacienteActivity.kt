@@ -85,19 +85,25 @@ class SignInPacienteActivity : AppCompatActivity() {
     private fun iniciarSesion(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener { authResult ->
-                val userId = authResult.user?.uid ?: return@addOnSuccessListener
+                val userId = authResult.user?.uid
+                android.util.Log.d("DEBUG_LOGIN", "Login Auth OK, UID: $userId")
 
                 // Verificar si es primer login
                 db.collection("pacientes")
                     .whereEqualTo("userId", userId)
                     .get()
                     .addOnSuccessListener { documents ->
+                        android.util.Log.d("DEBUG_LOGIN", "Docs encontrados: ${documents.size()}")
 
                         val document = documents.documents.firstOrNull()
-                        if (document == null) return@addOnSuccessListener
+                        if (document == null) {
+                            android.util.Log.e("DEBUG_LOGIN", "ERROR: no se encontró paciente con userId=$userId")
+                            return@addOnSuccessListener
+                        }
 
                         val primerLogin =
                             document.getBoolean("primerLogin") ?: false
+                        android.util.Log.d("DEBUG_LOGIN", "primerLogin: $primerLogin")
 
                         if (primerLogin) {
                             // Obligar a cambiar contraseña
@@ -113,6 +119,7 @@ class SignInPacienteActivity : AppCompatActivity() {
                     }
             }
             .addOnFailureListener { e ->
+                android.util.Log.e("DEBUG_LOGIN", "ERROR en login Auth: ${e.message}")
                 Toast.makeText(
                     this,
                     "Email o contraseña incorrectos",
@@ -131,7 +138,15 @@ class SignInPacienteActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { authResult ->
 
-                val authUid = authResult.user?.uid ?: return@addOnSuccessListener
+                val authUid = authResult.user?.uid
+                android.util.Log.d("DEBUG_ACTIVAR", "Auth UID obtenido: $authUid")
+                android.util.Log.d("DEBUG_ACTIVAR", "PacienteId a actualizar: $pacienteId")
+
+                if (authUid == null) {
+                    android.util.Log.e("DEBUG_ACTIVAR", "ERROR: authUid es null, saliendo")
+                    return@addOnSuccessListener
+                }
+
 
                 db.collection("pacientes")
                     .document(pacienteId)
@@ -143,17 +158,27 @@ class SignInPacienteActivity : AppCompatActivity() {
                     )
                     .addOnSuccessListener {
 
+                        android.util.Log.d("DEBUG_ACTIVAR", "Firestore actualizado correctamente")
                         Toast.makeText(
                             this,
                             "Cuenta activada correctamente",
                             Toast.LENGTH_LONG
                         ).show()
 
-                        iniciarSesion(email, password)
+                        mostrarDialogoCambioContraseña()
+                    }
+                    .addOnFailureListener { e ->
+                        android.util.Log.e("DEBUG_ACTIVAR", "ERROR actualizando Firestore: ${e.message}")
+                        Toast.makeText(
+                            this,
+                            "Error al guardar datos: ${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
             }
             .addOnFailureListener { e ->
 
+                android.util.Log.e("DEBUG_ACTIVAR", "ERROR creando usuario en Auth: ${e.message}")
                 Toast.makeText(
                     this,
                     "Error al activar cuenta: ${e.message}",
