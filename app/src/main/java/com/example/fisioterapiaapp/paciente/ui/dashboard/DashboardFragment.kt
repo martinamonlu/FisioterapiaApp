@@ -86,7 +86,14 @@ class DashboardFragment : Fragment() {
             val nombre = paciente?.nombre?.takeIf { it.isNotBlank() } ?: "paciente"
             binding.tvBienvenida.text = "Hola, $nombre 👋"
         }
-
+        vm.semanaActual.observe(viewLifecycleOwner) { semana ->
+            val duracion = vm.plan.value?.duracionSemanas ?: 4
+            binding.tvSemanaInfo.text = "Semana $semana / $duracion"
+        }
+        vm.semanaActual.observe(viewLifecycleOwner) { semana ->
+            val duracion = vm.plan.value?.duracionSemanas ?: 4
+            binding.tvSemanaInfo.text = "Semana $semana / $duracion"
+        }
 
         vm.plan.observe(viewLifecycleOwner) { plan ->
             if (plan == null) {
@@ -99,7 +106,6 @@ class DashboardFragment : Fragment() {
                 renderEjerciciosHoy()
             } else {
                 planIdActual = plan.id
-                binding.tvSemanaInfo.text = "Semana 1 / ${plan.duracionSemanas}"
                 binding.tvFase.text = "Fase: ${plan.fase}"
                 ejerciciosHoy = plan.ejercicios.mapIndexedNotNull { index, ejercicio ->
                     if (ejercicio.seRealizaEn(diaDeHoy())) EjercicioHoyUi(index, ejercicio) else null

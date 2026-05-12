@@ -255,6 +255,53 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- ── SECCIÓN INFORMES ── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Informes"
+                    android:textColor="#36769E"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGenerarInforme"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="+ Nuevo informe"
+                    android:textSize="12sp"
+                    android:textColor="#36769E"
+                    app:strokeColor="#36769E"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvSinInformesFisio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Todavía no hay informes generados para este paciente"
+                android:textColor="#999999"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:padding="16dp"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:id="@+id/containerInformesFisio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="8dp"/>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
