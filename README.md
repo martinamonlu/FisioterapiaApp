@@ -37,7 +37,7 @@ Permite al fisioterapeuta gestionar pacientes y crear planes de ejercicio person
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/<usuario>/FisioterapiaApp.git
+git clone https://github.com/martinamonlu/FisioterapiaApp.git
 cd FisioterapiaApp
 ```
 
