@@ -36,7 +36,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- ── Fisioterapeuta ── -->
+        </activity><!-- ── Fisioterapeuta ── -->
+
+
         <activity
             android:name=".SignInFisioActivity"
             android:exported="false" />
@@ -44,17 +46,12 @@
             android:name=".SignUpFisioActivity"
             android:exported="false" />
         <activity
-            android:name=".DashboardFisioActivity"
-            android:exported="false" />
-        <activity
-            android:name=".PerfilFisioActivity"
-            android:exported="false" />
-        <activity
-            android:name=".AddPacienteActivity"
-            android:exported="false" />
-        <activity
             android:name=".CrearPlanActivity"
-            android:exported="false" /> <!-- ── Paciente: Autenticación (MVVM) ── -->
+            android:exported="false" />
+        <activity
+            android:name=".fisio.ChatFisioActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" /> <!-- ── Paciente: Autenticación (MVVM) ── -->
         <activity
             android:name=".paciente.ui.auth.SignInPacienteActivity"
             android:exported="false"

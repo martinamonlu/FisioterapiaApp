@@ -8,6 +8,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import com.example.fisioterapiaapp.fisio.ChatFisioActivity
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
@@ -17,6 +19,7 @@ class DetallePacienteActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
 
     private var pacienteId = ""
+    private var nombreCompleto = ""
     private var planId = ""
     private var duracionSemanas = 1
     private var semanaActual = 1
@@ -26,98 +29,92 @@ class DetallePacienteActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Habilitar edge-to-edge para móviles con notch
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
         setContentView(R.layout.activity_detalle_paciente)
 
-        // Recibir datos del paciente
         pacienteId      = intent.getStringExtra("pacienteId") ?: ""
         val nombre      = intent.getStringExtra("nombre") ?: ""
         val apellidos   = intent.getStringExtra("apellidos") ?: ""
         val email       = intent.getStringExtra("email") ?: ""
         val diagnostico = intent.getStringExtra("diagnostico") ?: ""
+        nombreCompleto  = "$nombre $apellidos".trim()
 
-        // Rellenar cabecera
-        findViewById<TextView>(R.id.tvNombreCompleto).text = "$nombre $apellidos"
+        findViewById<TextView>(R.id.tvNombreCompleto).text = nombreCompleto
         findViewById<TextView>(R.id.tvEmail).text = email
         findViewById<TextView>(R.id.tvDiagnostico).text =
             if (diagnostico.isNotEmpty()) "Diagnóstico: $diagnostico" else "Sin diagnóstico registrado"
 
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
 
-        // Navegación semanas
         findViewById<ImageButton>(R.id.btnSemanaAnterior).setOnClickListener {
-            if (semanaActual > 1) {
-                semanaActual--
-                actualizarCalendario()
-            }
+            if (semanaActual > 1) { semanaActual--; actualizarCalendario() }
         }
-
         findViewById<ImageButton>(R.id.btnSemanaSiguiente).setOnClickListener {
-            if (semanaActual < duracionSemanas) {
-                semanaActual++
-                actualizarCalendario()
-            }
+            if (semanaActual < duracionSemanas) { semanaActual++; actualizarCalendario() }
         }
 
-        findViewById<com.google.android.material.button.MaterialButton>(R.id.btnVerDetalleSemana)
-            .setOnClickListener {
-                if (planId.isNotEmpty()) {
-                    val intent = Intent(this, DetalleSemanaActivity::class.java).apply {
-                        putExtra("planId", planId)
-                        putExtra("semana", semanaActual)
-                        putExtra("duracionSemanas", duracionSemanas)
-                        putExtra("nombre", "$nombre $apellidos")
-                    }
-                    startActivity(intent)
-                } else {
-                    Toast.makeText(this, "No hay plan activo para este paciente", Toast.LENGTH_SHORT).show()
-                }
-            }
+        findViewById<MaterialButton>(R.id.btnVerDetalleSemana).setOnClickListener {
+            if (planId.isNotEmpty()) abrirDetalleSemana()
+            else Toast.makeText(this, "No hay plan activo para este paciente", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<MaterialButton>(R.id.btnEditarPlan).setOnClickListener {
+            if (planId.isNotEmpty()) abrirEditorPlan()
+            else Toast.makeText(this, "No hay plan para editar", Toast.LENGTH_SHORT).show()
+        }
 
         cargarPlan()
 
         val bottomNav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavDetalle)
-
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_inicio -> true
                 R.id.nav_plan -> {
-                    if (planId.isNotEmpty()) {
-                        val intent = Intent(this, DetalleSemanaActivity::class.java).apply {
-                            putExtra("planId", planId)
-                            putExtra("semana", semanaActual)
-                            putExtra("duracionSemanas", duracionSemanas)
-                            putExtra("nombre", "${intent.getStringExtra("nombre")} ${intent.getStringExtra("apellidos")}")
-                        }
-                        startActivity(intent)
-                    } else {
-                        Toast.makeText(this, "No hay plan activo", Toast.LENGTH_SHORT).show()
-                    }
+                    if (planId.isNotEmpty()) abrirDetalleSemana()
+                    else Toast.makeText(this, "No hay plan activo", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.nav_chat -> {
-                    Toast.makeText(this, "Chat próximamente", Toast.LENGTH_SHORT).show()
+                    val i = Intent(this, ChatFisioActivity::class.java).apply {
+                        putExtra("pacienteId", pacienteId)
+                        putExtra("nombrePaciente", nombreCompleto)
+                    }
+                    startActivity(i)
                     true
                 }
                 else -> false
             }
         }
-
         bottomNav.selectedItemId = R.id.nav_inicio
+    }
 
+    private fun abrirDetalleSemana() {
+        val i = Intent(this, DetalleSemanaActivity::class.java).apply {
+            putExtra("planId", planId)
+            putExtra("semana", semanaActual)
+            putExtra("duracionSemanas", duracionSemanas)
+            putExtra("nombre", nombreCompleto)
+            putExtra("pacienteId", pacienteId)
+        }
+        startActivity(i)
+    }
+
+    private fun abrirEditorPlan() {
+        val i = Intent(this, CrearPlanActivity::class.java).apply {
+            putExtra("planId", planId)
+            putExtra("pacienteId", pacienteId)
+            putExtra("nombrePaciente", nombreCompleto)
+            putExtra("modoEdicion", true)
+        }
+        startActivity(i)
     }
 
     private fun cargarPlan() {
-        android.util.Log.d("DEBUG_PLAN", "Buscando plan para pacienteId: $pacienteId")
         db.collection("planes_ejercicio")
             .whereEqualTo("pacienteId", pacienteId)
             .whereEqualTo("activo", true)
             .get()
             .addOnSuccessListener { docs ->
-                android.util.Log.d("DEBUG_PLAN", "Docs encontrados: ${docs.size()}")
                 if (docs.isEmpty) {
                     findViewById<TextView>(R.id.tvTituloSemana).text = "Sin plan activo"
                     return@addOnSuccessListener
@@ -130,17 +127,16 @@ class DetallePacienteActivity : AppCompatActivity() {
                 @Suppress("UNCHECKED_CAST")
                 ejerciciosPlan = (doc.get("ejercicios") as? List<Map<String, Any>>) ?: emptyList()
 
-                // Calcular semana actual basándose en fechaCreacion
                 val fechaCreacion = doc.getTimestamp("fechaCreacion")?.toDate() ?: Date()
-                val hoy = Date()
-                val diffMs = hoy.time - fechaCreacion.time
-                val diffSemanas = (diffMs / (1000 * 60 * 60 * 24 * 7)).toInt() + 1
-                semanaActual = diffSemanas.coerceIn(1, duracionSemanas)
+                val diffMs = Date().time - fechaCreacion.time
+                semanaActual = ((diffMs / (1000 * 60 * 60 * 24 * 7)).toInt() + 1).coerceIn(1, duracionSemanas)
+
+                // Mostrar botón editar ahora que hay plan
+                findViewById<MaterialButton>(R.id.btnEditarPlan).visibility = View.VISIBLE
 
                 actualizarCalendario()
             }
             .addOnFailureListener { e ->
-                android.util.Log.e("DEBUG_PLAN", "Error: ${e.message}")
                 Toast.makeText(this, "Error al cargar el plan", Toast.LENGTH_SHORT).show()
             }
     }
@@ -149,17 +145,13 @@ class DetallePacienteActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvTituloSemana).text =
             "Plan · Semana $semanaActual/$duracionSemanas"
 
-        // Rango de fechas de la semana
-        val sdf = SimpleDateFormat("dd MMM", Locale("es", "ES"))
-        val cal = Calendar.getInstance()
-        // Semana 1 = semana de creación del plan
-        // calculamos la fecha de inicio de esa semana
         db.collection("planes_ejercicio").document(planId).get()
             .addOnSuccessListener { doc ->
                 val fechaCreacion = doc.getTimestamp("fechaCreacion")?.toDate() ?: Date()
+                val sdf = SimpleDateFormat("dd MMM", Locale("es", "ES"))
+                val cal = Calendar.getInstance()
                 cal.time = fechaCreacion
                 cal.add(Calendar.WEEK_OF_YEAR, semanaActual - 1)
-                // Ir al lunes de esa semana
                 cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
                 val inicioSemana = sdf.format(cal.time)
                 cal.add(Calendar.DAY_OF_WEEK, 6)
@@ -167,7 +159,6 @@ class DetallePacienteActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.tvRangoSemana).text = "$inicioSemana – $finSemana"
             }
 
-        // Recoger todos los días que tienen ejercicio
         val diasConEjercicio = mutableSetOf<String>()
         for (ejercicio in ejerciciosPlan) {
             @Suppress("UNCHECKED_CAST")
@@ -175,7 +166,6 @@ class DetallePacienteActivity : AppCompatActivity() {
             diasConEjercicio.addAll(dias)
         }
 
-        // Actualizar dots
         val dots = mapOf(
             "Lunes"     to R.id.dotLunes,
             "Martes"    to R.id.dotMartes,
@@ -185,7 +175,6 @@ class DetallePacienteActivity : AppCompatActivity() {
             "Sábado"    to R.id.dotSabado,
             "Domingo"   to R.id.dotDomingo
         )
-
         for ((dia, viewId) in dots) {
             val dot = findViewById<View>(viewId)
             dot.setBackgroundResource(

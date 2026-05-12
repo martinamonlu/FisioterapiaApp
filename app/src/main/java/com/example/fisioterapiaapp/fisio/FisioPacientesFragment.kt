@@ -13,7 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.fisioterapiaapp.AddPacienteActivity
 import com.example.fisioterapiaapp.DetallePacienteActivity
 import com.example.fisioterapiaapp.PacienteAdapter
 import com.example.fisioterapiaapp.R

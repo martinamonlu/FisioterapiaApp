@@ -11,7 +11,7 @@ import com.example.fisioterapiaapp.databinding.FragmentChatBinding
 import com.example.fisioterapiaapp.paciente.ui.chat.ChatAdapter
 import com.example.fisioterapiaapp.paciente.viewmodel.ChatViewModel
 
-class FisioChatFragment : Fragment() {
+class isioChatFragment : Fragment() {
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!

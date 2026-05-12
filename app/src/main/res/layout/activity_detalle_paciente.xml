@@ -240,6 +240,18 @@
                         android:textColor="@color/button_text"
                         app:backgroundTint="@color/primary_teal"/>
 
+                    <!-- BOTÓN EDITAR PLAN -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEditarPlan"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Editar plan"
+                        android:textColor="#36769E"
+                        android:visibility="gone"
+                        app:strokeColor="#36769E"/>
+
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

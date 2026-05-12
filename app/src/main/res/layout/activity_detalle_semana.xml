@@ -46,8 +46,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="16dp"
+        android:paddingBottom="8dp"
         app:layout_constraintTop_toBottomOf="@+id/headerDetalleSemana"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toTopOf="@+id/btnEditarPlanDetalle">
 
         <LinearLayout
             android:id="@+id/containerDetalleSemana"
@@ -56,5 +57,20 @@
             android:orientation="vertical"/>
 
     </androidx.core.widget.NestedScrollView>
+
+    <!-- BOTÓN EDITAR PLAN -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEditarPlanDetalle"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_margin="16dp"
+        android:text="Editar plan"
+        android:textColor="@color/button_text"
+        android:textSize="16sp"
+        app:backgroundTint="#36769E"
+        app:cornerRadius="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

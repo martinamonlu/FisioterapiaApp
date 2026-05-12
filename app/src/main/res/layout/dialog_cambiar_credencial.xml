@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/tvTituloCredencial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cambiar credencial"
+        android:textColor="#36769E"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:id="@+id/tvLabel1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Campo 1"
+        android:textColor="#547F9B"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
+
+    <EditText
+        android:id="@+id/etCampo1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#547F9B"
+        android:textColor="#333333"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/tvLabel2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Campo 2"
+        android:textColor="#547F9B"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
+
+    <EditText
+        android:id="@+id/etCampo2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="#547F9B"
+        android:textColor="#333333"
+        android:textSize="15sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Contraseña actual (para confirmar tu identidad)"
+        android:textColor="#547F9B"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
+
+    <EditText
+        android:id="@+id/etPasswordConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:hint="Tu contraseña actual"
+        android:backgroundTint="#547F9B"
+        android:textColor="#333333"
+        android:textSize="15sp"/>
+
+</LinearLayout>
