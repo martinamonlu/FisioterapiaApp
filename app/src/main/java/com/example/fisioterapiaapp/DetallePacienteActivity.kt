@@ -1,19 +1,14 @@
 package com.example.fisioterapiaapp
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.example.fisioterapiaapp.fisio.ChatFisioActivity
-import com.example.fisioterapiaapp.fisio.GenerarInformeActivity
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -30,12 +25,7 @@ class DetallePacienteActivity : AppCompatActivity() {
     private var semanaActual   = 1
     private lateinit var ejerciciosPlan: List<Map<String, Any>>
 
-    // Launcher para volver de GenerarInformeActivity y recargar la lista
-    private val informeLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) cargarInformes()
-    }
+    private val diasOrden = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,18 +63,8 @@ class DetallePacienteActivity : AppCompatActivity() {
             else Toast.makeText(this, "No hay plan para editar", Toast.LENGTH_SHORT).show()
         }
 
-        // Botón generar informe
-        findViewById<MaterialButton>(R.id.btnGenerarInforme).setOnClickListener {
-            informeLauncher.launch(
-                Intent(this, GenerarInformeActivity::class.java).apply {
-                    putExtra("pacienteId", pacienteId)
-                    putExtra("nombrePaciente", nombreCompleto)
-                }
-            )
-        }
 
         cargarPlan()
-        cargarInformes()
 
         val bottomNav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavDetalle)
         bottomNav.setOnItemSelectedListener { item ->
@@ -159,65 +139,11 @@ class DetallePacienteActivity : AppCompatActivity() {
                 findViewById<MaterialButton>(R.id.btnEditarPlan).visibility = View.VISIBLE
                 actualizarCalendario()
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
                 Toast.makeText(this, "Error al cargar el plan", Toast.LENGTH_SHORT).show()
             }
     }
 
-    // ── Cargar informes ────────────────────────────────────────────────────────
-
-    private fun cargarInformes() {
-        val container  = findViewById<LinearLayout>(R.id.containerInformesFisio)
-        val tvSin      = findViewById<TextView>(R.id.tvSinInformesFisio)
-
-        db.collection("informes")
-            .whereEqualTo("pacienteId", pacienteId)
-            .orderBy("fechaGeneracion", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .get()
-            .addOnSuccessListener { docs ->
-                container.removeAllViews()
-
-                if (docs.isEmpty) {
-                    tvSin.visibility = View.VISIBLE
-                    return@addOnSuccessListener
-                }
-
-                tvSin.visibility = View.GONE
-                val inflater = LayoutInflater.from(this)
-
-                for (doc in docs) {
-                    val titulo      = doc.getString("titulo") ?: "Informe"
-                    val urlPdf      = doc.getString("urlPdf") ?: ""
-                    val comentario  = doc.getString("comentarioFisio") ?: ""
-                    val fecha       = doc.getTimestamp("fechaGeneracion")?.toDate()
-
-                    val itemView = inflater.inflate(R.layout.item_informe, container, false)
-                    itemView.findViewById<TextView>(R.id.tvTituloInforme).text = titulo
-                    itemView.findViewById<TextView>(R.id.tvFechaInforme).text =
-                        fecha?.let { SimpleDateFormat("dd/MM/yyyy", Locale("es", "ES")).format(it) } ?: ""
-
-                    val tvComentario = itemView.findViewById<TextView>(R.id.tvComentarioFisio)
-                    if (comentario.isNotBlank()) {
-                        tvComentario.visibility = View.VISIBLE
-                        tvComentario.text = comentario
-                    } else {
-                        tvComentario.visibility = View.GONE
-                    }
-
-                    val btnVer = itemView.findViewById<MaterialButton>(R.id.btnVerPdf)
-                    btnVer.isEnabled = urlPdf.isNotEmpty()
-                    btnVer.setOnClickListener {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(urlPdf)))
-                    }
-
-                    container.addView(itemView)
-                }
-            }
-            .addOnFailureListener {
-                tvSin.visibility = View.VISIBLE
-                tvSin.text = "Error al cargar informes"
-            }
-    }
 
     // ── Calendario ─────────────────────────────────────────────────────────────
 

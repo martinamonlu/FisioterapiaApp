@@ -51,10 +51,6 @@
         <activity
             android:name=".fisio.ChatFisioActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".fisio.GenerarInformeActivity"
-            android:exported="false"
             android:windowSoftInputMode="adjustResize" /> <!-- ── Paciente: Autenticación (MVVM) ── -->
         <activity
             android:name=".paciente.ui.auth.SignInPacienteActivity"
