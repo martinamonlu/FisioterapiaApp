@@ -65,104 +65,125 @@ En **Firestore → Reglas**, pega y publica:
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    function esFisio() {
-      let u = get(/databases/$(database)/documents/usuarios/$(request.auth.uid));
-      return u.data.tipo == 'fisio' && u.data.aprobado == true;
-    }
-
+  
+    // ── Usuarios (fisioterapeutas) ────────────────────────────
     match /usuarios/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if request.auth != null && 
+                           request.auth.uid == userId;
     }
+    
+    // ── Pacientes ─────────────────────────────────────────────
+    match /pacientes/{pacienteId} {
 
-    match /pacientes/{docId} {
+      // Leer: paciente o su fisio
       allow read: if request.auth != null && (
         resource.data.userId == request.auth.uid ||
         resource.data.fisioterapeutaId == request.auth.uid
       );
-      allow create: if request.auth != null && esFisio();
-      allow update: if request.auth != null && (
-        resource.data.userId == request.auth.uid ||
-        resource.data.fisioterapeutaId == request.auth.uid
-      );
-      allow delete: if false;
-    }
 
+      // Queries
+      allow list: if request.auth != null;
+
+      // Crear: fisio autenticado
+      allow create: if request.auth != null &&
+        request.resource.data.fisioterapeutaId == request.auth.uid;
+
+      // Actualizar
+      allow update: if request.auth != null && (
+
+        // Paciente dueño
+        resource.data.userId == request.auth.uid ||
+
+        // Fisio dueño
+        resource.data.fisioterapeutaId == request.auth.uid ||
+
+        // Activación inicial
+        (
+          (
+            !("userId" in resource.data) ||
+            resource.data.userId == null
+          )
+          &&
+          request.resource.data.userId == request.auth.uid
+        )
+      );
+
+      // Eliminar: solo fisio
+      allow delete: if request.auth != null &&
+        resource.data.fisioterapeutaId == request.auth.uid;
+    }
+    
+    // ── Planes de ejercicio ───────────────────────────────────
     match /planes_ejercicio/{planId} {
+      
+      // Leer: fisio o paciente del plan
       allow read: if request.auth != null && (
         resource.data.fisioterapeutaId == request.auth.uid ||
-        resource.data.pacienteId == request.auth.uid
+        (exists(/databases/$(database)/documents/pacientes/$(resource.data.pacienteId)) &&
+         get(/databases/$(database)/documents/pacientes/$(resource.data.pacienteId)).data.userId == request.auth.uid)
       );
-      allow create, update: if request.auth != null && esFisio();
-      allow delete: if false;
+      
+      // Queries (whereEqualTo, etc): cualquier usuario autenticado
+  		allow list: if request.auth != null;
+      
+      // Crear: el fisio que está autenticado
+      allow create: if request.auth != null &&
+        request.resource.data.fisioterapeutaId == request.auth.uid;
+      
+      // Actualizar/Eliminar: solo el fisio que creó el plan
+      allow update, delete: if request.auth != null &&
+        resource.data.fisioterapeutaId == request.auth.uid;
     }
-
+    
+    // ── Registros post-sesión ─────────────────────────────────
     match /registros_sesion/{registroId} {
-      allow read:   if request.auth != null;
-      allow create: if request.auth != null;
-      allow update, delete: if false;
+      allow read, write: if request.auth != null && (
+        exists(/databases/$(database)/documents/pacientes/$(resource.data.pacienteId)) &&
+        get(/databases/$(database)/documents/pacientes/$(resource.data.pacienteId)).data.userId == request.auth.uid
+      );
+      
+      allow create: if request.auth != null && (
+        exists(/databases/$(database)/documents/pacientes/$(request.resource.data.pacienteId)) &&
+        get(/databases/$(database)/documents/pacientes/$(request.resource.data.pacienteId)).data.userId == request.auth.uid
+      );
     }
-
+    
+    // ── Alertas ───────────────────────────────────────────────
     match /alertas/{alertaId} {
       allow read: if request.auth != null && (
-        resource.data.pacienteId == request.auth.uid || esFisio()
+        exists(/databases/$(database)/documents/pacientes/$(resource.data.pacienteId)) &&
+        get(/databases/$(database)/documents/pacientes/$(resource.data.pacienteId)).data.userId == request.auth.uid
       );
-      allow update: if request.auth != null &&
-        resource.data.pacienteId == request.auth.uid &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['leida']);
-      allow create: if request.auth != null;
-      allow delete: if false;
+      allow write: if request.auth != null;
     }
-
-    match /conversaciones/{convId}/mensajes/{msgId} {
-      allow read: if request.auth != null &&
-                     convId.matches('.*' + request.auth.uid + '.*');
-      allow create: if request.auth != null &&
-                       convId.matches('.*' + request.auth.uid + '.*') &&
-                       request.resource.data.emisorId == request.auth.uid;
-      allow update, delete: if false;
+    
+    // ── Chat ──────────────────────────────────────────────────
+    match /conversaciones/{convId}/mensajes/{mensajeId} {
+      allow read, write: if request.auth != null && (
+        convId.matches('.*' + request.auth.uid + '.*')
+      );
     }
-
+    
+    // ── Informes ──────────────────────────────────────────────
     match /informes/{informeId} {
       allow read: if request.auth != null && (
-        resource.data.pacienteId == request.auth.uid ||
-        resource.data.fisioterapeutaId == request.auth.uid
+        exists(/databases/$(database)/documents/pacientes/$(resource.data.pacienteId)) &&
+        get(/databases/$(database)/documents/pacientes/$(resource.data.pacienteId)).data.userId == request.auth.uid
       );
-      allow create: if request.auth != null && esFisio();
-      allow update, delete: if false;
-    }
-  }
-}
-```
-
-### 5. Reglas de Storage
-
-En **Storage → Reglas**, pega y publica:
-
-```
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /videos_ejercicios/{allPaths=**} {
-      allow read:  if request.auth != null;
-      allow write: if request.auth != null;
-    }
-    match /informes/{pacienteId}/{fileName} {
-      allow read:  if request.auth != null;
       allow write: if request.auth != null;
     }
   }
 }
 ```
 
-### 6. Crear el primer fisioterapeuta
+### 5. Crear el primer fisioterapeuta
 
 1. En la app, pulsa **"Soy fisioterapeuta"** → **Registrarse**
 2. Rellena todos los campos y crea la cuenta
-3. En **Firebase Console → Firestore → colección `usuarios`**, abre el documento del fisio recién creado y cambia `aprobado: false` a `aprobado: true`
+3. En **Firebase Console → Firestore → colección `usuarios`**, abre el documento del fisio recién creado y cambia `aprobado: false` a `aprobado: true` (función del administrador)
 4. Ya puedes iniciar sesión como fisio
 
-### 7. Abrir en Android Studio
+### 6. Abrir en Android Studio
 
 ```
 File → Open → selecciona la carpeta FisioterapiaApp
@@ -274,7 +295,6 @@ app/src/main/java/com/example/fisioterapiaapp/
 - [ ] Generación de informes PDF exportables
 - [ ] Soporte multiidioma completo (EN/ES)
 - [ ] Notificaciones por email
-- [ ] Panel de administrador para aprobación de fisios
 
 ---
 
@@ -287,7 +307,3 @@ app/src/main/java/com/example/fisioterapiaapp/
 - Los datos de cada paciente solo son accesibles por él mismo y su fisioterapeuta asignado
 
 ---
-
-## Licencia
-
-Proyecto académico — Máster Universitario en Ingeniería Informática.
