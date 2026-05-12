@@ -1,14 +1,19 @@
 package com.example.fisioterapiaapp
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.example.fisioterapiaapp.fisio.ChatFisioActivity
+import com.example.fisioterapiaapp.fisio.GenerarInformeActivity
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -18,14 +23,19 @@ class DetallePacienteActivity : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
 
-    private var pacienteId = ""
+    private var pacienteId     = ""
     private var nombreCompleto = ""
-    private var planId = ""
+    private var planId         = ""
     private var duracionSemanas = 1
-    private var semanaActual = 1
+    private var semanaActual   = 1
     private lateinit var ejerciciosPlan: List<Map<String, Any>>
 
-    private val diasOrden = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+    // Launcher para volver de GenerarInformeActivity y recargar la lista
+    private val informeLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) cargarInformes()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +73,18 @@ class DetallePacienteActivity : AppCompatActivity() {
             else Toast.makeText(this, "No hay plan para editar", Toast.LENGTH_SHORT).show()
         }
 
+        // Botón generar informe
+        findViewById<MaterialButton>(R.id.btnGenerarInforme).setOnClickListener {
+            informeLauncher.launch(
+                Intent(this, GenerarInformeActivity::class.java).apply {
+                    putExtra("pacienteId", pacienteId)
+                    putExtra("nombrePaciente", nombreCompleto)
+                }
+            )
+        }
+
         cargarPlan()
+        cargarInformes()
 
         val bottomNav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavDetalle)
         bottomNav.setOnItemSelectedListener { item ->
@@ -88,6 +109,8 @@ class DetallePacienteActivity : AppCompatActivity() {
         bottomNav.selectedItemId = R.id.nav_inicio
     }
 
+    // ── Navegación ─────────────────────────────────────────────────────────────
+
     private fun abrirDetalleSemana() {
         val i = Intent(this, DetalleSemanaActivity::class.java).apply {
             putExtra("planId", planId)
@@ -108,6 +131,8 @@ class DetallePacienteActivity : AppCompatActivity() {
         }
         startActivity(i)
     }
+
+    // ── Cargar plan ────────────────────────────────────────────────────────────
 
     private fun cargarPlan() {
         db.collection("planes_ejercicio")
@@ -131,15 +156,70 @@ class DetallePacienteActivity : AppCompatActivity() {
                 val diffMs = Date().time - fechaCreacion.time
                 semanaActual = ((diffMs / (1000 * 60 * 60 * 24 * 7)).toInt() + 1).coerceIn(1, duracionSemanas)
 
-                // Mostrar botón editar ahora que hay plan
                 findViewById<MaterialButton>(R.id.btnEditarPlan).visibility = View.VISIBLE
-
                 actualizarCalendario()
             }
-            .addOnFailureListener { e ->
+            .addOnFailureListener {
                 Toast.makeText(this, "Error al cargar el plan", Toast.LENGTH_SHORT).show()
             }
     }
+
+    // ── Cargar informes ────────────────────────────────────────────────────────
+
+    private fun cargarInformes() {
+        val container  = findViewById<LinearLayout>(R.id.containerInformesFisio)
+        val tvSin      = findViewById<TextView>(R.id.tvSinInformesFisio)
+
+        db.collection("informes")
+            .whereEqualTo("pacienteId", pacienteId)
+            .orderBy("fechaGeneracion", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { docs ->
+                container.removeAllViews()
+
+                if (docs.isEmpty) {
+                    tvSin.visibility = View.VISIBLE
+                    return@addOnSuccessListener
+                }
+
+                tvSin.visibility = View.GONE
+                val inflater = LayoutInflater.from(this)
+
+                for (doc in docs) {
+                    val titulo      = doc.getString("titulo") ?: "Informe"
+                    val urlPdf      = doc.getString("urlPdf") ?: ""
+                    val comentario  = doc.getString("comentarioFisio") ?: ""
+                    val fecha       = doc.getTimestamp("fechaGeneracion")?.toDate()
+
+                    val itemView = inflater.inflate(R.layout.item_informe, container, false)
+                    itemView.findViewById<TextView>(R.id.tvTituloInforme).text = titulo
+                    itemView.findViewById<TextView>(R.id.tvFechaInforme).text =
+                        fecha?.let { SimpleDateFormat("dd/MM/yyyy", Locale("es", "ES")).format(it) } ?: ""
+
+                    val tvComentario = itemView.findViewById<TextView>(R.id.tvComentarioFisio)
+                    if (comentario.isNotBlank()) {
+                        tvComentario.visibility = View.VISIBLE
+                        tvComentario.text = comentario
+                    } else {
+                        tvComentario.visibility = View.GONE
+                    }
+
+                    val btnVer = itemView.findViewById<MaterialButton>(R.id.btnVerPdf)
+                    btnVer.isEnabled = urlPdf.isNotEmpty()
+                    btnVer.setOnClickListener {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(urlPdf)))
+                    }
+
+                    container.addView(itemView)
+                }
+            }
+            .addOnFailureListener {
+                tvSin.visibility = View.VISIBLE
+                tvSin.text = "Error al cargar informes"
+            }
+    }
+
+    // ── Calendario ─────────────────────────────────────────────────────────────
 
     private fun actualizarCalendario() {
         findViewById<TextView>(R.id.tvTituloSemana).text =
