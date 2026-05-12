@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#c2d1ce">
+    android:background="#c2d1ce"
+    android:fitsSystemWindows="true">
 
     <!-- CABECERA -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -13,6 +14,7 @@
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         android:padding="16dp"
+        android:paddingTop="40dp"
         android:elevation="4dp">
 
         <ImageButton
@@ -25,7 +27,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="Volver"
-            android:layout_marginTop="24dp"/>
+            android:layout_marginTop="8dp"/>
 
         <!-- FOTO PERFIL -->
         <ImageView
@@ -85,7 +87,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="220dp"
         android:padding="16dp">
 
         <LinearLayout
@@ -228,7 +230,7 @@
                     </LinearLayout>
 
                     <!-- BOTÓN VER DETALLE -->
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnVerDetalleSemana"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

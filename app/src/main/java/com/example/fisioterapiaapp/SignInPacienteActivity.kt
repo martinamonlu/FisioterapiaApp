@@ -23,7 +23,7 @@ class SignInPacienteActivity : AppCompatActivity() {
         val etEmail = findViewById<EditText>(R.id.etEmailPaciente)
         val etPassword = findViewById<EditText>(R.id.etPasswordPaciente)
         val btnEntrar = findViewById<Button>(R.id.btnEntrarPaciente)
-        val btnBack = findViewById<ImageButton>(R.id.btnBackPaciente)
+        val btnBack = findViewById<ImageButton>(R.id.btnBack)
 
         btnEntrar.setOnClickListener {
             val email = etEmail.text.toString().trim()

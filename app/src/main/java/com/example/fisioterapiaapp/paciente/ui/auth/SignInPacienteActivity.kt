@@ -41,7 +41,7 @@ class SignInPacienteActivity : AppCompatActivity() {
         etEmail    = findViewById(R.id.etEmailPaciente)
         etPassword = findViewById(R.id.etPasswordPaciente)
         btnEntrar  = findViewById(R.id.btnEntrarPaciente)
-        btnBack    = findViewById(R.id.btnBackPaciente)
+        btnBack    = findViewById(R.id.btnBack)
 
         btnBack.setOnClickListener { finish() }
 

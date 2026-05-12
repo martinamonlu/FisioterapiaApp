@@ -15,22 +15,33 @@
     <color name="rehapp_surface">#FFFFFF</color>
 
     <!-- ===================== COLORES DE FONDO ===================== -->
-    <color name="background_light">#c2d1ce</color>
+    <color name="background_light">#F5F5F5</color>
+    <color name="background_light_alt">#c2d1ce</color>
+    <color name="background_warning">#FFF3E0</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="white_transparent">#CCFFFFFF</color>
+
+    <!-- ===================== COLORES DE CARDS ===================== -->
+    <color name="card_background_primary">#5FA19D</color>
+    <color name="card_background_secondary">#FFFFFF</color>
 
     <!-- ===================== COLORES DE TEXTO ===================== -->
     <color name="text_primary">#36769E</color>
     <color name="text_secondary">#547F9B</color>
+    <color name="text_dark">#212121</color>
+    <color name="text_gray">#757575</color>
+    <color name="text_gray_light">#9E9E9E</color>
     <color name="text_hint">#728E8D</color>
     <color name="text_on_primary">#FFFFFF</color>
+    <color name="text_warning">#E65100</color>
 
     <!-- ===================== COLORES DE ESTADO ===================== -->
     <color name="error">#FF0000</color>
     <color name="black">#FF000000</color>
 
     <!-- ===================== COLORES SEMÁNTICOS ===================== -->
-    <color name="button_background">#547F9B</color>
-    <color name="button_background_alt">#7AB5B2</color>
+    <color name="button_background">#7AB5B2</color>
+    <color name="button_background_alt">#547F9B</color>
     <color name="button_text">#FFFFFF</color>
     <color name="input_border">#547F9B</color>
     <color name="input_text">#36769E</color>
@@ -67,4 +78,8 @@
     <!-- ===================== CHAT BURBUJAS ===================== -->
     <color name="bubble_paciente">#2C7873</color>
     <color name="bubble_fisio">#EEEEEE</color>
+
+    <!-- ===================== AVATAR Y BADGES ===================== -->
+    <color name="avatar_background">#5FA19D</color>
+
 </resources>

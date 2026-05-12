@@ -11,6 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import android.content.Intent
+import android.widget.LinearLayout
 
 class PerfilFisioActivity : AppCompatActivity() {
 
@@ -38,6 +40,7 @@ class PerfilFisioActivity : AppCompatActivity() {
         val etColegiado    = findViewById<EditText>(R.id.etColegiado)
         val etEspecialidad = findViewById<EditText>(R.id.etEspecialidad)
         val etEmail        = findViewById<EditText>(R.id.etEmail)
+        val btnCerrarSesion = findViewById<LinearLayout>(R.id.btnCerrarSesion)
 
         // Agrupamos los campos
         camposEditables = listOf(etNombre, etApellidos, etNacimiento, etColegiado, etEspecialidad, etEmail)
@@ -52,6 +55,19 @@ class PerfilFisioActivity : AppCompatActivity() {
         // BOTÓN ATRÁS
         btnBack.setOnClickListener {
             finish()
+        }
+
+        // 4. LÓGICA DE CERRAR SESIÓN
+        btnCerrarSesion.setOnClickListener {
+            auth.signOut() // Cierra sesión en Firebase
+
+            // Navegar a MainActivity limpiando el historial
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+
+            finish() // Cierra PerfilFisioActivity
+            Toast.makeText(this, "Has cerrado sesión", Toast.LENGTH_SHORT).show()
         }
 
         // BOTÓN EDITAR
