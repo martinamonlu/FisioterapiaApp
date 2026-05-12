@@ -90,23 +90,29 @@ class DashboardFisioActivity : AppCompatActivity() {
         })
 
         // BOTONES DE NAVEGACIÓN INFERIOR (ORIGINALES)
-        val btnPerfil  = findViewById<ImageButton>(R.id.btnPerfil)
-        val btnAdd     = findViewById<ImageButton>(R.id.btnAddPaciente)
-        val btnConfig  = findViewById<ImageButton>(R.id.btnConfig)
+        val bottomNav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavFisio)
 
-        btnPerfil.setOnClickListener {
-            startActivity(Intent(this, PerfilFisioActivity::class.java))
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_pacientes -> true
+                R.id.nav_añadir -> {
+                    val intent = Intent(this, AddPacienteActivity::class.java)
+                    addPacienteLauncher.launch(intent)
+                    true
+                }
+                R.id.nav_perfil -> {
+                    startActivity(Intent(this, PerfilFisioActivity::class.java))
+                    true
+                }
+                R.id.nav_config -> {
+                    Toast.makeText(this, getString(R.string.msg_config), Toast.LENGTH_SHORT).show()
+                    true
+                }
+                else -> false
+            }
         }
 
-        btnConfig.setOnClickListener {
-            Toast.makeText(this, getString(R.string.msg_config), Toast.LENGTH_SHORT).show()
-        }
-
-        // Abre AddPacienteActivity y espera resultado con el launcher
-        btnAdd.setOnClickListener {
-            val intent = Intent(this, AddPacienteActivity::class.java)
-            addPacienteLauncher.launch(intent)
-        }
+        bottomNav.selectedItemId = R.id.nav_pacientes
     }
 
     override fun onResume() {

@@ -44,13 +44,16 @@ class SignInPacienteActivity : AppCompatActivity() {
 
     private fun verificarPaciente(email: String, password: String) {
 
+        android.util.Log.d("DEBUG_VERIFICAR", "Buscando email: '$email'")
         db.collection("pacientes")
             .whereEqualTo("email", email)
             .get()
             .addOnSuccessListener { documents ->
 
+                android.util.Log.d("DEBUG_VERIFICAR", "Docs encontrados: ${documents.size()}")
                 if (documents.isEmpty) {
 
+                    android.util.Log.e("DEBUG_VERIFICAR", "No se encontró paciente con ese email")
                     Toast.makeText(
                         this,
                         "No existe ningún paciente con ese email",
@@ -65,8 +68,13 @@ class SignInPacienteActivity : AppCompatActivity() {
                 val estadoCuenta =
                     pacienteDoc.getString("estadoCuenta") ?: "pendiente"
 
+                android.util.Log.d("DEBUG_VERIFICAR", "estadoCuenta: $estadoCuenta")
+
                 if (estadoCuenta == "pendiente") {
 
+                    android.util.Log.d("DEBUG_ACTIVAR", "Email: '$email'")
+                    android.util.Log.d("DEBUG_ACTIVAR", "DNI (password): '$password'")
+                    android.util.Log.d("DEBUG_ACTIVAR", "Longitud DNI: ${password.length}")
                     activarCuentaPaciente(
                         pacienteDoc.id,
                         email,
@@ -77,6 +85,10 @@ class SignInPacienteActivity : AppCompatActivity() {
 
                     iniciarSesion(email, password)
                 }
+            }
+            .addOnFailureListener { e ->
+                android.util.Log.e("DEBUG_VERIFICAR", "ERROR en query: ${e.message}")
+                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
 

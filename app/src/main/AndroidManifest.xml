@@ -19,26 +19,42 @@
         android:theme="@style/Theme.FisioterapiaApp"
         android:usesCleartextTraffic="false"
         tools:targetApi="31">
-
-        <!-- ── Detalles ── -->
+        <activity
+            android:name=".fisio.FisioConfigFragment"
+            android:exported="false" />
+        <activity
+            android:name=".fisio.FisioAddPacienteFragment"
+            android:exported="false" />
+        <activity
+            android:name=".fisio.FisioPacientesFragment"
+            android:exported="false" />
+        <activity
+            android:name=".fisio.FisioPerfilFragment"
+            android:exported="false" />
+        <activity
+            android:name=".fisio.FisioChatFragment"
+            android:exported="false" />
+        <activity
+            android:name=".fisio.FisioPlanFragment"
+            android:exported="false" />
+        <activity
+            android:name=".FisioMainActivity"
+            android:exported="false" /> <!-- ── Detalles ── -->
         <activity
             android:name=".DetalleSemanaActivity"
             android:exported="false" />
         <activity
             android:name=".DetallePacienteActivity"
-            android:exported="false" />
-
-        <!-- ── Pantalla principal ── -->
+            android:exported="false" /> <!-- ── Pantalla principal ── -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- ── Fisioterapeuta ── -->
+        </activity> <!-- ── Fisioterapeuta ── -->
         <activity
             android:name=".SignInFisioActivity"
             android:exported="false" />
@@ -56,9 +72,7 @@
             android:exported="false" />
         <activity
             android:name=".CrearPlanActivity"
-            android:exported="false" />
-
-        <!-- ── Paciente: Autenticación (MVVM) ── -->
+            android:exported="false" /> <!-- ── Paciente: Autenticación (MVVM) ── -->
         <activity
             android:name=".paciente.ui.auth.SignInPacienteActivity"
             android:exported="false"
@@ -66,27 +80,19 @@
         <activity
             android:name=".paciente.ui.auth.CambiarPasswordActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- ── Paciente: Shell principal con bottom nav ── -->
+            android:windowSoftInputMode="adjustResize" /> <!-- ── Paciente: Shell principal con bottom nav ── -->
         <activity
             android:name=".paciente.ui.dashboard.PacienteMainActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- ── Paciente: Detalle del ejercicio con vídeo ── -->
+            android:windowSoftInputMode="adjustResize" /> <!-- ── Paciente: Detalle del ejercicio con vídeo ── -->
         <activity
             android:name=".paciente.ui.exercise.EjercicioDetalleActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
-
-        <!-- ── Paciente: Registro post-sesión ── -->
+            android:screenOrientation="portrait" /> <!-- ── Paciente: Registro post-sesión ── -->
         <activity
             android:name=".paciente.ui.registro.RegistroSesionActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- ── Notificaciones FCM ── -->
+            android:windowSoftInputMode="adjustResize" /> <!-- ── Notificaciones FCM ── -->
         <service
             android:name=".paciente.util.RehappMessagingService"
             android:exported="false">

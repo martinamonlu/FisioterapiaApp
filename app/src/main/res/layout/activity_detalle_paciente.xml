@@ -87,7 +87,8 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="220dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginBottom="56dp"
         android:padding="16dp">
 
         <LinearLayout
@@ -244,5 +245,15 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavDetalle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:layout_gravity="bottom"
+        app:itemIconTint="@color/nav_color_selector"
+        app:itemTextColor="@color/nav_color_selector"
+        app:menu="@menu/menu_bottom_nav_detalle_paciente" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

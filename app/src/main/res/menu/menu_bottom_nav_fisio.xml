@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_pacientes"
+        android:icon="@drawable/ic_home"
+        android:title="Pacientes" />
+
+    <item
+        android:id="@+id/nav_añadir"
+        android:icon="@drawable/iconomas"
+        android:title="Añadir" />
+
+    <item
+        android:id="@+id/nav_perfil"
+        android:icon="@drawable/ic_person"
+        android:title="Perfil" />
+
+    <item
+        android:id="@+id/nav_config"
+        android:icon="@drawable/settings"
+        android:title="Config" />
+
+</menu>

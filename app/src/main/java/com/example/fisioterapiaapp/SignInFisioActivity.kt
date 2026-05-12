@@ -107,7 +107,7 @@ class SignInFisioActivity : AppCompatActivity() {
                                 else -> {
                                     // Es fisio Y está aprobado - permitir acceso
                                     Toast.makeText(this, "Bienvenid@", Toast.LENGTH_SHORT).show()
-                                    val intent = Intent(this, DashboardFisioActivity::class.java)
+                                    val intent = Intent(this, FisioMainActivity::class.java)
                                     startActivity(intent)
                                     finish()
                                 }

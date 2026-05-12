@@ -78,14 +78,46 @@ class DetallePacienteActivity : AppCompatActivity() {
             }
 
         cargarPlan()
+
+        val bottomNav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavDetalle)
+
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_inicio -> true
+                R.id.nav_plan -> {
+                    if (planId.isNotEmpty()) {
+                        val intent = Intent(this, DetalleSemanaActivity::class.java).apply {
+                            putExtra("planId", planId)
+                            putExtra("semana", semanaActual)
+                            putExtra("duracionSemanas", duracionSemanas)
+                            putExtra("nombre", "${intent.getStringExtra("nombre")} ${intent.getStringExtra("apellidos")}")
+                        }
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(this, "No hay plan activo", Toast.LENGTH_SHORT).show()
+                    }
+                    true
+                }
+                R.id.nav_chat -> {
+                    Toast.makeText(this, "Chat próximamente", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                else -> false
+            }
+        }
+
+        bottomNav.selectedItemId = R.id.nav_inicio
+
     }
 
     private fun cargarPlan() {
+        android.util.Log.d("DEBUG_PLAN", "Buscando plan para pacienteId: $pacienteId")
         db.collection("planes_ejercicio")
             .whereEqualTo("pacienteId", pacienteId)
             .whereEqualTo("activo", true)
             .get()
             .addOnSuccessListener { docs ->
+                android.util.Log.d("DEBUG_PLAN", "Docs encontrados: ${docs.size()}")
                 if (docs.isEmpty) {
                     findViewById<TextView>(R.id.tvTituloSemana).text = "Sin plan activo"
                     return@addOnSuccessListener
@@ -107,7 +139,8 @@ class DetallePacienteActivity : AppCompatActivity() {
 
                 actualizarCalendario()
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
+                android.util.Log.e("DEBUG_PLAN", "Error: ${e.message}")
                 Toast.makeText(this, "Error al cargar el plan", Toast.LENGTH_SHORT).show()
             }
     }
