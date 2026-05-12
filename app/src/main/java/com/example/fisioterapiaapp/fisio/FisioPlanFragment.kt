@@ -8,9 +8,9 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.fisioterapiaapp.R
 
-class isioPlanFragment : Fragment() {
+class FisioPlanFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val view = inflater.inflate(R.layout.activity_fisio_plan_fragment, container, false)
+        val view = inflater.inflate(R.layout.fragment_plan, container, false)
         return view
     }
 }
