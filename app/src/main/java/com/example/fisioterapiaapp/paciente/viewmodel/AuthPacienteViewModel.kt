@@ -48,12 +48,12 @@ class AuthPacienteViewModel : ViewModel() {
         _estado.value = LoginResultado.Cargando
         viewModelScope.launch {
             try {
-                // 1) Primero autenticar en Firebase Auth
+                // 1) Intentar autenticar en Firebase Auth (cuenta ya activada)
                 val result = auth.signInWithEmailAndPassword(email, password).await()
                 val uid = result.user?.uid
                     ?: run { _estado.value = LoginResultado.Error("Error al iniciar sesión"); return@launch }
 
-                // 2) Ya autenticado, buscar el documento del paciente por userId
+                // 2) Buscar el documento del paciente por userId
                 val snap = db.collection("pacientes")
                     .whereEqualTo("userId", uid)
                     .limit(1)
@@ -67,10 +67,27 @@ class AuthPacienteViewModel : ViewModel() {
                     if (primerLogin) LoginResultado.PrimerLogin(doc.id)
                     else LoginResultado.Ok(doc.id)
 
-            } catch (e: Exception) {
-                _estado.value = LoginResultado.Error(
-                    e.localizedMessage ?: "Email o contraseña incorrectos"
-                )
+            } catch (authError: Exception) {
+                // Auth falló: puede ser cuenta pendiente (aún no creada en Firebase Auth)
+                try {
+                    val snap = db.collection("pacientes")
+                        .whereEqualTo("email", email)
+                        .limit(1)
+                        .get().await()
+                    val doc = snap.documents.firstOrNull()
+                    if (doc != null
+                        && doc.getString("estadoCuenta") == "pendiente"
+                        && doc.getString("dni") == password
+                    ) {
+                        _estado.value = LoginResultado.ActivarCuenta(doc.id, email)
+                    } else {
+                        _estado.value = LoginResultado.Error("Email o contraseña incorrectos")
+                    }
+                } catch (e: Exception) {
+                    _estado.value = LoginResultado.Error(
+                        authError.localizedMessage ?: "Email o contraseña incorrectos"
+                    )
+                }
             }
         }
     }
