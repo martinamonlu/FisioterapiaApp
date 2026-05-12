@@ -67,7 +67,12 @@ class DashboardPacienteViewModel(application: Application) : AndroidViewModel(ap
                 if (plan != null) {
                     _registroHoy.postValue(repo.getRegistroDia(plan.id, diaDeHoy()))
                     val registros = repo.getRegistrosDePlan(plan.id)
-                    val sesionesEsperadas = plan.ejercicios.sumOf { it.diasSemana.size } * plan.duracionSemanas
+                    val diasUnicos = plan.ejercicios
+                        .flatMap { it.diasSemana }
+                        .map { it.lowercase() }
+                        .toSet()
+                        .size
+                    val sesionesEsperadas = diasUnicos * plan.duracionSemanas
                     if (sesionesEsperadas > 0) {
                         val completadas = registros.count { it.sesionCompletada }
                         _adherencia.postValue((completadas.toFloat() / sesionesEsperadas * 100f).coerceIn(0f, 100f))

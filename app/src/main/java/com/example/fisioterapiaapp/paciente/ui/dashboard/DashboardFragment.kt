@@ -19,13 +19,19 @@ import com.example.fisioterapiaapp.paciente.util.diaDeHoy
 import com.example.fisioterapiaapp.paciente.util.gone
 import com.example.fisioterapiaapp.paciente.util.visible
 import com.example.fisioterapiaapp.paciente.viewmodel.DashboardPacienteViewModel
-
+import com.example.fisioterapiaapp.paciente.ui.exercise.EjercicioDetalleActivity
+import com.example.fisioterapiaapp.paciente.viewmodel.ProgresoViewModel
+import com.example.fisioterapiaapp.paciente.model.UiState
+import android.graphics.Color
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardPacienteBinding? = null
     private val binding get() = _binding!!
     private val vm: DashboardPacienteViewModel by viewModels()
-
+    private val vmProgreso: ProgresoViewModel by viewModels()
     private var planIdActual: String = ""
     private var ejerciciosHoy: List<EjercicioHoyUi> = emptyList()
     private var ejerciciosSeleccionados: MutableSet<Int> = mutableSetOf()
@@ -55,6 +61,9 @@ class DashboardFragment : Fragment() {
         }
         observarDatos()
         vm.cargarDashboard()
+        configurarGraficaDashboard()
+        vmProgreso.cargar()
+        observarGrafica()
     }
 
     private fun observarDatos() {
@@ -166,9 +175,13 @@ class DashboardFragment : Fragment() {
             }
 
             itemView.setOnClickListener {
-                if (!sesionYaRegistrada) {
-                    check.isChecked = !check.isChecked
+                val intent = Intent(
+                    requireContext(),
+                    EjercicioDetalleActivity::class.java
+                ).apply {
+                    putExtra(EjercicioDetalleActivity.EXTRA_EJERCICIO, ejercicio)
                 }
+                startActivity(intent)
             }
 
             binding.containerEjerciciosHoy.addView(itemView)
@@ -211,7 +224,62 @@ class DashboardFragment : Fragment() {
         super.onResume()
         vm.cargarDashboard()
     }
+    private fun configurarGraficaDashboard() {
+        binding.chartEvolucionDashboard.apply {
+            description.isEnabled = false
+            setTouchEnabled(false)
+            legend.isEnabled = true
+            xAxis.apply {
+                position = XAxis.XAxisPosition.BOTTOM
+                granularity = 1f
+                setDrawGridLines(false)
+            }
+            axisLeft.apply {
+                axisMinimum = 0f
+                axisMaximum = 10f
+            }
+            axisRight.isEnabled = false
+        }
+    }
 
+    private fun observarGrafica() {
+        vmProgreso.puntos.observe(viewLifecycleOwner) { state ->
+            if (state is UiState.Success && state.data.isNotEmpty()) {
+                poblarGraficaDashboard(state.data)
+            }
+        }
+    }
+
+    private fun poblarGraficaDashboard(puntos: List<com.example.fisioterapiaapp.paciente.model.PuntoProgreso>) {
+        val semanas = puntos.map { "S${it.semana}" }
+
+        val entriesEva = puntos.mapIndexed { i, p -> Entry(i.toFloat(), p.eva) }
+        val entriesRpe = puntos.mapIndexed { i, p -> Entry(i.toFloat(), p.rpe / 2f) } // escalar RPE a 0-10
+
+        val dsEva = LineDataSet(entriesEva, "Dolor (EVA)").apply {
+            color = Color.parseColor("#E53935")
+            setCircleColor(Color.parseColor("#E53935"))
+            lineWidth = 2f
+            circleRadius = 3f
+            setDrawValues(false)
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+        }
+        val dsRpe = LineDataSet(entriesRpe, "Esfuerzo (RPE)").apply {
+            color = Color.parseColor("#8E24AA")
+            setCircleColor(Color.parseColor("#8E24AA"))
+            lineWidth = 2f
+            circleRadius = 3f
+            setDrawValues(false)
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+        }
+
+        binding.chartEvolucionDashboard.apply {
+            data = LineData(dsEva, dsRpe)
+            xAxis.valueFormatter = IndexAxisValueFormatter(semanas)
+            animateX(600)
+            invalidate()
+        }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

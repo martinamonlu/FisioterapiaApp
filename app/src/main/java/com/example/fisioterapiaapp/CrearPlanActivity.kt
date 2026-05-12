@@ -28,6 +28,7 @@ class CrearPlanActivity : AppCompatActivity() {
     private var pacienteId: String = ""
     private var nombrePaciente: String = ""
     private var contadorEjercicios = 0
+    private var ejercicioViewActual: EjercicioView? = null
 
     // Lista para almacenar los datos de cada ejercicio
     private val ejerciciosViews = mutableListOf<EjercicioView>()
@@ -98,6 +99,8 @@ class CrearPlanActivity : AppCompatActivity() {
         val tvNumero = ejercicioView.findViewById<TextView>(R.id.tvNumeroEjercicio)
         val btnEliminar = ejercicioView.findViewById<ImageButton>(R.id.btnEliminarEjercicio)
         val spinnerTipo = ejercicioView.findViewById<Spinner>(R.id.spinnerTipoEjercicio)
+        val etNombreEjercicio = ejercicioView.findViewById<EditText>(R.id.etNombreEjercicio)
+        val etDescripcion = ejercicioView.findViewById<EditText>(R.id.etDescripcion)
         val etRepeticiones = ejercicioView.findViewById<EditText>(R.id.etRepeticiones)
         val etSeries = ejercicioView.findViewById<EditText>(R.id.etSeries)
         val etPeso = ejercicioView.findViewById<EditText>(R.id.etPeso)
@@ -130,6 +133,8 @@ class CrearPlanActivity : AppCompatActivity() {
         // Crear objeto para almacenar referencias
         val ejercicioViewObj = EjercicioView(
             view = ejercicioView,
+            etNombreEjercicio = etNombreEjercicio,
+            etDescripcion = etDescripcion,
             spinnerTipo = spinnerTipo,
             etRepeticiones = etRepeticiones,
             etSeries = etSeries,
@@ -149,7 +154,12 @@ class CrearPlanActivity : AppCompatActivity() {
 
         // Botón seleccionar vídeo
         btnSeleccionarVideo.setOnClickListener {
-            seleccionarVideo(ejercicioViewObj)
+            ejercicioViewActual = ejercicioViewObj
+            val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                type = "video/*"
+                addCategory(Intent.CATEGORY_OPENABLE)
+            }
+            startActivityForResult(Intent.createChooser(intent, "Seleccionar vídeo"), REQUEST_VIDEO_PICK)
         }
 
         // Botón eliminar
@@ -167,25 +177,11 @@ class CrearPlanActivity : AppCompatActivity() {
         containerEjercicios.addView(ejercicioView)
     }
 
-    private fun seleccionarVideo(ejercicioView: EjercicioView) {
-        // Guardar referencia del ejercicio actual para saber a cuál asignar el vídeo
-        ejercicioView.view.tag = ejercicioView
-
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = "video/*"
-            addCategory(Intent.CATEGORY_OPENABLE)
-        }
-        startActivityForResult(Intent.createChooser(intent, "Seleccionar vídeo"), REQUEST_VIDEO_PICK)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == REQUEST_VIDEO_PICK && resultCode == Activity.RESULT_OK) {
             data?.data?.let { uri ->
-                // Encontrar el ejercicio que solicitó el vídeo
-                val ejercicioView = ejerciciosViews.find { it.view.tag == it }
-                ejercicioView?.let {
+                ejercicioViewActual?.let {
                     it.videoUri = uri
                     it.tvNombreVideo.text = obtenerNombreArchivo(uri)
                     it.tvNombreVideo.setTextColor(getColor(R.color.text_primary))
@@ -235,6 +231,8 @@ class CrearPlanActivity : AppCompatActivity() {
         val ejercicios = mutableListOf<HashMap<String, Any?>>()
 
         for ((index, ejercicioView) in ejerciciosViews.withIndex()) {
+            val nombre = ejercicioView.etNombreEjercicio.text.toString().trim()
+            val descripcion = ejercicioView.etDescripcion.text.toString().trim()
             val tipo = ejercicioView.spinnerTipo.selectedItem.toString()
             val repeticiones = ejercicioView.etRepeticiones.text.toString().trim()
             val series = ejercicioView.etSeries.text.toString().trim()
@@ -251,6 +249,12 @@ class CrearPlanActivity : AppCompatActivity() {
 
 
             when {
+                nombre.isEmpty() -> {
+                    ejercicioView.etNombreEjercicio.error = "Obligatorio"
+                    ejercicioView.etNombreEjercicio.requestFocus()
+                    Toast.makeText(this, "Añade el nombre del ejercicio ${index + 1}", Toast.LENGTH_SHORT).show()
+                    return
+                }
                 repeticiones.isEmpty() -> {
                     ejercicioView.etRepeticiones.error = "Obligatorio"
                     ejercicioView.etRepeticiones.requestFocus()
@@ -273,12 +277,14 @@ class CrearPlanActivity : AppCompatActivity() {
 
             // Crear objeto ejercicio (sin URL de vídeo por ahora, se subirá después)
             val ejercicio = hashMapOf<String, Any?>(
+                "nombreEjercicio" to nombre,
+                "descripcion" to descripcion,
                 "tipo" to tipo,
                 "repeticiones" to repeticiones.toInt(),
                 "series" to series.toInt(),
                 "peso" to peso,
                 "diasSemana" to diasSeleccionados,
-                "videoUrl" to null // Se actualizará después de subir
+                "videoUrl" to null
             )
 
             ejercicios.add(ejercicio)
@@ -377,6 +383,8 @@ class CrearPlanActivity : AppCompatActivity() {
     // Clase auxiliar para almacenar referencias de cada ejercicio
     private data class EjercicioView(
         val view: android.view.View,
+        val etNombreEjercicio: EditText,
+        val etDescripcion: EditText,
         val spinnerTipo: Spinner,
         val etRepeticiones: EditText,
         val etSeries: EditText,

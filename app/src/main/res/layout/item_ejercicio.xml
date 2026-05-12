@@ -225,7 +225,48 @@
                 android:layoutDirection="rtl"/>
 
         </LinearLayout>
+        <!-- NOMBRE DEL EJERCICIO -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre del ejercicio *"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
+        <EditText
+            android:id="@+id/etNombreEjercicio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:backgroundTint="@color/input_border"
+            android:hint="Ej: Sentadilla con banda"
+            android:inputType="textCapSentences"
+            android:textColor="@color/input_text"
+            android:textColorHint="@color/input_hint" />
+
+        <!-- DESCRIPCIÓN -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Descripción / instrucciones"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:backgroundTint="@color/input_border"
+            android:hint="Ej: Flexiona la rodilla hasta 90°, mantén la espalda recta..."
+            android:inputType="textCapSentences|textMultiLine"
+            android:minLines="2"
+            android:maxLines="4"
+            android:gravity="top"
+            android:textColor="@color/input_text"
+            android:textColorHint="@color/input_hint" />
         <!-- VÍDEO -->
         <TextView
             android:layout_width="wrap_content"

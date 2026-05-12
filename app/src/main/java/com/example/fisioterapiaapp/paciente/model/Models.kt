@@ -60,7 +60,8 @@ data class EjercicioPlan(
     val peso: String = "",
     val diasSemana: List<String> = emptyList(),
     val videoUrl: String? = null,
-    val nombreEjercicio: String = ""
+    val nombreEjercicio: String = "",
+    val descripcion: String = ""
 ) : Parcelable {
     val cargaTexto: String
         get() = if (peso.isBlank() || peso == "0") "Sin carga" else "$peso kg"

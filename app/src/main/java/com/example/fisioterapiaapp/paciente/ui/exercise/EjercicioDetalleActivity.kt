@@ -52,7 +52,12 @@ class EjercicioDetalleActivity : AppCompatActivity() {
 
         // Descripción no existe en el modelo Firestore (lo guarda el fisio
         // como `tipo`); ocultamos la card si no hay nada que mostrar.
-        binding.cardDescripcion.visibility = View.GONE
+        if (ej.descripcion.isNotBlank()) {
+            binding.cardDescripcion.visibility = View.VISIBLE
+            binding.tvDescripcion.text = ej.descripcion
+        } else {
+            binding.cardDescripcion.visibility = View.GONE
+        }
 
         if (!ej.videoUrl.isNullOrBlank()) {
             binding.playerView.visibility = View.VISIBLE

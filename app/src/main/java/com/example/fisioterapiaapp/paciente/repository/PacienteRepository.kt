@@ -120,10 +120,12 @@ class PacienteRepository(
 
     suspend fun getRegistrosDePlan(planId: String): List<RegistroSesion> {
         val pid = pacienteIdActual() ?: return emptyList()
+        android.util.Log.d("REPO_DEBUG", "Buscando registros: pacienteId=$pid, planId=$planId")
         val snap = db.collection("registros_sesion")
             .whereEqualTo("pacienteId", pid)
             .whereEqualTo("planId", planId)
             .get().await()
+        android.util.Log.d("REPO_DEBUG", "Registros encontrados: ${snap.documents.size}")
         return snap.documents.mapNotNull {
             it.toObject(RegistroSesion::class.java)?.copy(id = it.id)
         }
@@ -242,7 +244,11 @@ class PacienteRepository(
         if (registros.isEmpty() || plan.duracionSemanas == 0) return emptyList()
 
         // Sesiones esperadas por semana = suma de días marcados en cada ejercicio
-        val sesionesPorSemana = plan.ejercicios.sumOf { it.diasSemana.size }
+        val sesionesPorSemana = plan.ejercicios
+            .flatMap { it.diasSemana }
+            .map { it.lowercase() }
+            .toSet()
+            .size
         if (sesionesPorSemana == 0) return emptyList()
 
         val fechaInicio = plan.fechaCreacion?.toDate()?.time ?: return emptyList()
