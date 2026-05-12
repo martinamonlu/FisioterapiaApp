@@ -286,6 +286,231 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- ── Card de registro de la sesión ── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardRegistro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Registro de esta sesión"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#2C7873"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- Estado: ya completado hoy -->
+                    <LinearLayout
+                        android:id="@+id/layoutCompletado"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="#F0FAF9"
+                        android:padding="12dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓ Completado hoy"
+                            android:textColor="#2C7873"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp"/>
+
+                        <TextView
+                            android:id="@+id/tvResumenCompletado"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#555555"
+                            android:textSize="13sp"/>
+
+                    </LinearLayout>
+
+                    <!-- Formulario de registro -->
+                    <LinearLayout
+                        android:id="@+id/layoutFormRegistro"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <!-- Series -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="12dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Series realizadas"
+                                android:textColor="#424242"
+                                android:textSize="14sp"/>
+
+                            <ImageButton
+                                android:id="@+id/btnMenosSeries"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:background="@drawable/circle_background"
+                                android:src="@android:drawable/ic_input_delete"
+                                android:contentDescription="Menos series"
+                                app:tint="#2C7873"/>
+
+                            <TextView
+                                android:id="@+id/tvSeriesVal"
+                                android:layout_width="48dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                android:textColor="#2C7873"
+                                android:text="3"/>
+
+                            <ImageButton
+                                android:id="@+id/btnMasSeries"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:background="@drawable/circle_background"
+                                android:src="@android:drawable/ic_input_add"
+                                android:contentDescription="Más series"
+                                app:tint="#2C7873"/>
+                        </LinearLayout>
+
+                        <!-- Repeticiones -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="12dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Repeticiones por serie"
+                                android:textColor="#424242"
+                                android:textSize="14sp"/>
+
+                            <ImageButton
+                                android:id="@+id/btnMenosReps"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:background="@drawable/circle_background"
+                                android:src="@android:drawable/ic_input_delete"
+                                android:contentDescription="Menos reps"
+                                app:tint="#2C7873"/>
+
+                            <TextView
+                                android:id="@+id/tvRepsVal"
+                                android:layout_width="48dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                android:textColor="#2C7873"
+                                android:text="10"/>
+
+                            <ImageButton
+                                android:id="@+id/btnMasReps"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:background="@drawable/circle_background"
+                                android:src="@android:drawable/ic_input_add"
+                                android:contentDescription="Más reps"
+                                app:tint="#2C7873"/>
+                        </LinearLayout>
+
+                        <!-- Peso / carga -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Peso / carga usada"
+                            android:textColor="#424242"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="4dp"/>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            app:boxStrokeColor="#2C7873">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etPesoRealizado"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Ej: 5 kg, banda media, sin carga..."
+                                android:inputType="text"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Dolor EVA -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="4dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Dolor durante el ejercicio"
+                                android:textColor="#424242"
+                                android:textSize="14sp"/>
+
+                            <TextView
+                                android:id="@+id/tvEvaValEjercicio"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0 – Sin dolor"
+                                android:textColor="#2C7873"
+                                android:textSize="13sp"
+                                android:textStyle="bold"/>
+                        </LinearLayout>
+
+                        <SeekBar
+                            android:id="@+id/seekEvaEjercicio"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:max="10"
+                            android:progress="0"
+                            android:progressTint="#2C7873"
+                            android:thumbTint="#2C7873"
+                            android:layout_marginBottom="20dp"/>
+
+                        <!-- Botón completar -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCompletarEjercicio"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:text="Marcar como completado"
+                            android:textSize="16sp"
+                            android:backgroundTint="#2C7873"
+                            app:cornerRadius="12dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- Botón volver -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAtras"

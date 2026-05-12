@@ -1,5 +1,6 @@
 package com.example.fisioterapiaapp.paciente.ui.dashboard
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.fisioterapiaapp.R
@@ -36,6 +38,19 @@ class DashboardFragment : Fragment() {
     private var ejerciciosHoy: List<EjercicioHoyUi> = emptyList()
     private var ejerciciosSeleccionados: MutableSet<Int> = mutableSetOf()
     private var registroHoy: RegistroSesion? = null
+
+    // Recibe el resultado de EjercicioDetalleActivity cuando el paciente completa un ejercicio
+    private val ejercicioLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val indexCompletado = result.data?.getIntExtra(EjercicioDetalleActivity.RESULT_INDEX, -1) ?: -1
+            if (indexCompletado >= 0) {
+                ejerciciosSeleccionados.add(indexCompletado)
+                renderEjerciciosHoy()
+            }
+        }
+    }
 
     private data class EjercicioHoyUi(
         val indexPlan: Int,
@@ -175,13 +190,13 @@ class DashboardFragment : Fragment() {
             }
 
             itemView.setOnClickListener {
-                val intent = Intent(
-                    requireContext(),
-                    EjercicioDetalleActivity::class.java
-                ).apply {
+                val intent = Intent(requireContext(), EjercicioDetalleActivity::class.java).apply {
                     putExtra(EjercicioDetalleActivity.EXTRA_EJERCICIO, ejercicio)
+                    putExtra(EjercicioDetalleActivity.EXTRA_PLAN_ID, planIdActual)
+                    putExtra(EjercicioDetalleActivity.EXTRA_DIA, diaDeHoy())
+                    putExtra(EjercicioDetalleActivity.EXTRA_INDEX, indexPlan)
                 }
-                startActivity(intent)
+                ejercicioLauncher.launch(intent)
             }
 
             binding.containerEjerciciosHoy.addView(itemView)
