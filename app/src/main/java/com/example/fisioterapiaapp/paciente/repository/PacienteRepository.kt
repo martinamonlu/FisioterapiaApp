@@ -133,16 +133,28 @@ class PacienteRepository(
 
     suspend fun getRegistroDia(planId: String, dia: String): RegistroSesion? {
         val pid = pacienteIdActual() ?: return null
+
+        // Inicio y fin del día de hoy
+        val cal = java.util.Calendar.getInstance()
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        cal.set(java.util.Calendar.MINUTE, 0)
+        cal.set(java.util.Calendar.SECOND, 0)
+        val inicioDia = com.google.firebase.Timestamp(cal.time)
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 23)
+        cal.set(java.util.Calendar.MINUTE, 59)
+        cal.set(java.util.Calendar.SECOND, 59)
+        val finDia = com.google.firebase.Timestamp(cal.time)
+
+        // Traer todos los registros del día de la semana y filtrar por fecha en memoria
         val snap = db.collection("registros_sesion")
             .whereEqualTo("pacienteId", pid)
             .whereEqualTo("planId", planId)
             .whereEqualTo("dia", dia)
-            .orderBy("fecha", Query.Direction.DESCENDING)
-            .limit(1)
             .get().await()
-        return snap.documents.firstOrNull()
-            ?.toObject(RegistroSesion::class.java)
-            ?.copy(id = snap.documents.first().id)
+
+        return snap.documents
+            .mapNotNull { it.toObject(RegistroSesion::class.java)?.copy(id = it.id) }
+            .firstOrNull { it.fecha >= inicioDia && it.fecha <= finDia }
     }
 
     // ── Alertas ────────────────────────────────────────────────────

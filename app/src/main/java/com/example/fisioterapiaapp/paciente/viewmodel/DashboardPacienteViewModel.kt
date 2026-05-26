@@ -46,7 +46,9 @@ class DashboardPacienteViewModel(application: Application) : AndroidViewModel(ap
     // ── Registro de hoy (si existe) ──────────────────────────
     private val _registroHoy = MutableLiveData<RegistroSesion?>()
     val registroHoy: LiveData<RegistroSesion?> = _registroHoy
-
+    // ── Semana actual ────────────────────────────────────
+    private val _semanaActual = MutableLiveData(1)
+    val semanaActual: LiveData<Int> = _semanaActual
     /** Carga adherencia y registro de hoy cuando ya hay plan. */
     fun cargarDashboard() {
         viewModelScope.launch {
@@ -65,6 +67,15 @@ class DashboardPacienteViewModel(application: Application) : AndroidViewModel(ap
                 _plan.postValue(plan)
 
                 if (plan != null) {
+                    // Calcular semana actual dinámicamente
+                    val fechaInicio = plan.fechaCreacion?.toDate()?.time ?: System.currentTimeMillis()
+                    val ahora = System.currentTimeMillis()
+                    val msSemana = 7L * 24 * 60 * 60 * 1000
+                    val semanaActual = ((ahora - fechaInicio) / msSemana + 1)
+                        .toInt()
+                        .coerceIn(1, plan.duracionSemanas)
+                    _semanaActual.postValue(semanaActual)
+
                     _registroHoy.postValue(repo.getRegistroDia(plan.id, diaDeHoy()))
                     val registros = repo.getRegistrosDePlan(plan.id)
                     val diasUnicos = plan.ejercicios

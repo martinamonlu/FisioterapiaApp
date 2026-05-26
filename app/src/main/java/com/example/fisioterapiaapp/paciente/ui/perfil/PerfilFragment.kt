@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fisioterapiaapp.MainActivity
 import com.example.fisioterapiaapp.databinding.FragmentPerfilBinding
@@ -18,6 +19,7 @@ import com.example.fisioterapiaapp.paciente.util.gone
 import com.example.fisioterapiaapp.paciente.util.visible
 import com.example.fisioterapiaapp.paciente.viewmodel.DashboardPacienteViewModel
 import com.example.fisioterapiaapp.paciente.viewmodel.InformesViewModel
+import kotlinx.coroutines.launch
 
 class PerfilFragment : Fragment() {
 
@@ -39,7 +41,30 @@ class PerfilFragment : Fragment() {
         configurarInformesAdapter()
         observarDatos()
         vmInformes.cargar()
-        vmPaciente.cargarDashboard() // recargar adherencia
+        vmPaciente.cargarDashboard()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val repo = com.example.fisioterapiaapp.paciente.repository.PacienteRepository()
+                val plan = repo.getPlanActivo()
+                if (plan != null) {
+                    val registros = repo.getRegistrosDePlan(plan.id)
+                    val diasUnicos = plan.ejercicios
+                        .flatMap { it.diasSemana }
+                        .map { it.lowercase() }
+                        .toSet()
+                        .size
+                    val sesionesEsperadas = diasUnicos * plan.duracionSemanas
+                    if (sesionesEsperadas > 0) {
+                        val completadas = registros.count { it.sesionCompletada }
+                        val pct = (completadas.toFloat() / sesionesEsperadas * 100f).coerceIn(0f, 100f)
+                        binding.tvAdherenciaTotal.text = "Adherencia total: ${"%.0f".format(pct)}%"
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("PERFIL", "Error adherencia: ${e.message}")
+            }
+        }
 
         binding.btnCerrarSesion.setOnClickListener {
             AlertDialog.Builder(requireContext())
@@ -79,10 +104,6 @@ class PerfilFragment : Fragment() {
                 binding.tvLesion.text =
                     "Diagnóstico: ${if (it.diagnostico.isBlank()) "No especificado" else it.diagnostico}"
             }
-        }
-
-        vmPaciente.adherencia.observe(viewLifecycleOwner) { pct ->
-            binding.tvAdherenciaTotal.text = "Adherencia total: ${"%.0f".format(pct)}%"
         }
 
         vmInformes.informes.observe(viewLifecycleOwner) { state ->
